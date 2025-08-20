@@ -1,0 +1,19 @@
+
+
+#include <stdint.h>
+
+#define ADC_BASE_ADDR          0x50040000UL
+
+#define ADC_CR_REG_OFFSET      0x08
+#define ADC_CR_REG_ADDR        (ADC_BASE_ADDR+ADC_CR_REG_OFFSET)
+
+
+
+int main(void)
+{
+    uint32_t *pAdcCrReg = (uint32_t *)ADC_CR_REG_ADDR;
+
+    *pAdcCrReg |= (1<<31);
+
+
+}
