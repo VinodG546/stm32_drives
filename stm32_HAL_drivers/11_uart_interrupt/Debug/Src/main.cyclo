@@ -1,0 +1,8 @@
+../Src/main.c:24:6:HAL_UART_TxCpltCallback	1
+../Src/main.c:29:6:HAL_UART_RxCpltCallback	1
+../Src/main.c:37:5:main	1
+../Src/main.c:53:6:uart_init	2
+../Src/main.c:91:6:led_init	1
+../Src/main.c:104:6:USART1_IRQHandler	1
+../Src/main.c:110:6:SysTick_Handler	1
+../Src/main.c:114:6:Error_Handler	1

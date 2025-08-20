@@ -1,0 +1,22 @@
+#include "stm32l4xx_hal.h"
+#include"adc.h"
+
+uint32_t sensor_value;
+int main()
+{
+	HAL_Init();
+	adc_init_start();
+
+	while(1)
+	{
+		sensor_value = adc_read();
+		//HAL_Delay(100);
+	}
+}
+
+
+void SysTick_Handler(void)
+{
+	HAL_IncTick();
+}
+

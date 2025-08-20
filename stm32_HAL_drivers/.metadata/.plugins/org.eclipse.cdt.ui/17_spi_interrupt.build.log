@@ -1,0 +1,10 @@
+15:56:33 **** Incremental Build of configuration Debug for project 17_spi_interrupt ****
+make -j12 all 
+arm-none-eabi-size  17_spi_interrupt.elf 
+   text	   data	    bss	    dec	    hex	filename
+   6616	     24	   1760	   8400	   20d0	17_spi_interrupt.elf
+Finished building: default.size.stdout
+ 
+
+15:56:34 Build Finished. 0 errors, 0 warnings. (took 202ms)
+

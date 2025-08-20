@@ -1,0 +1,17 @@
+15:08:16 **** Incremental Build of configuration Debug for project 10_ADC_Interrupt_exti3 ****
+make -j12 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DSTM32L476xx -c -I../Inc -I"C:/Users/VINOD/STM32CubeIDE/workspace_1.19.0/10_ADC_Interrupt_exti3/Drivers/CMSIS/Device/ST/STM32L4xx/Include" -I"C:/Users/VINOD/STM32CubeIDE/workspace_1.19.0/10_ADC_Interrupt_exti3/Drivers/CMSIS/Include" -I"C:/Users/VINOD/STM32CubeIDE/workspace_1.19.0/10_ADC_Interrupt_exti3/Drivers/STM32L4xx_HAL_Driver/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/main.o"
+arm-none-eabi-gcc -o "10_ADC_Interrupt_exti3.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\VINOD\STM32CubeIDE\workspace_1.19.0\10_ADC_Interrupt_exti3\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="10_ADC_Interrupt_exti3.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: 10_ADC_Interrupt_exti3.elf
+ 
+arm-none-eabi-size  10_ADC_Interrupt_exti3.elf 
+arm-none-eabi-objdump -h -S 10_ADC_Interrupt_exti3.elf  > "10_ADC_Interrupt_exti3.list"
+   text	   data	    bss	    dec	    hex	filename
+   7860	     12	   1748	   9620	   2594	10_ADC_Interrupt_exti3.elf
+Finished building: default.size.stdout
+ 
+Finished building: 10_ADC_Interrupt_exti3.list
+ 
+
+15:08:16 Build Finished. 0 errors, 0 warnings. (took 838ms)
+

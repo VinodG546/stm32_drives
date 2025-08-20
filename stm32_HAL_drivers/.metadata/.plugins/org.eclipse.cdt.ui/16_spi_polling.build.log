@@ -1,0 +1,10 @@
+15:43:28 **** Incremental Build of configuration Debug for project 16_spi_polling ****
+make -j12 all 
+arm-none-eabi-size  16_spi_polling.elf 
+   text	   data	    bss	    dec	    hex	filename
+   5968	     24	   1760	   7752	   1e48	16_spi_polling.elf
+Finished building: default.size.stdout
+ 
+
+15:43:28 Build Finished. 0 errors, 0 warnings. (took 205ms)
+

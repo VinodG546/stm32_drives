@@ -1,0 +1,10 @@
+15:35:45 **** Incremental Build of configuration Debug for project 02_g_pins ****
+make -j12 all 
+arm-none-eabi-size  02_g_pins.elf 
+   text	   data	    bss	    dec	    hex	filename
+   2528	     12	   1572	   4112	   1010	02_g_pins.elf
+Finished building: default.size.stdout
+ 
+
+15:35:45 Build Finished. 0 errors, 0 warnings. (took 316ms)
+

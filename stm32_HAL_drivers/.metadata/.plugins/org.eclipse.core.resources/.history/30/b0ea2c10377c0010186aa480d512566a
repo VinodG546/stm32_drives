@@ -1,0 +1,61 @@
+#include "stm32l4xx_hal.h"
+
+SPI_HandleTypeDef hspi1;
+void spi1_init(void);
+
+
+uint8_t tx_buffer[10] = {0,1,2,3,4,5,6,7,8,9};
+uint8_t rx_buffer[10];
+
+
+
+int main()
+{
+	HAL_Init();
+	spi1_init();
+
+	HAL_SPI_TransmitReceive(&hspi1, tx_buffer, rx_buffer, 10, 100);
+
+	while(1)
+	{
+
+	}
+}
+
+void spi1_init(void){
+	GPIO_InitTypeDef GPIO_InitStruct={0};
+	__HAL_RCC_SPI1_CLK_ENABLE();
+	__HAL_RCC_GPIOA_CLK_ENABLE();
+
+	/*pa5-spi1_sck
+	 * pa6-spi1_miso
+	 * pa7-spi1_mosi*/
+
+	GPIO_InitStruct.Pin= GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7;
+	GPIO_InitStruct.Mode=GPIO_MODE_AF_PP;
+	GPIO_InitStruct.Alternate=GPIO_AF5_SPI1;
+	GPIO_InitStruct.Pull=GPIO_NOPULL;
+	GPIO_InitStruct.Speed=GPIO_SPEED_FREQ_VERY_HIGH;
+	HAL_GPIO_Init(GPIOA,&GPIO_InitStruct);
+
+
+	hspi1.Instance=SPI1;
+	hspi1.Init.Mode = SPI_MODE_MASTER;
+	hspi1.Init.Direction = SPI_DIRECTION_2LINES;
+	hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
+	hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;		//CPOL = 0;
+	hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;	//CPHA = 0
+	hspi1.Init.NSS = SPI_NSS_SOFT;				//Software Mode
+	hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
+	hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
+	hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
+	hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+
+	HAL_SPI_Init(&hspi1);
+}
+
+void SysTick_Handler(void)
+{
+	HAL_IncTick();
+}
+

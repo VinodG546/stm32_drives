@@ -1,0 +1,5 @@
+../Src/main.c:20:5:main	8	static
+../Src/main.c:35:6:rtc_init	216	static
+../Src/main.c:63:6:rtc_calender_config	32	static
+../Src/main.c:88:6:rtc_calender_show	48	static
+../Src/main.c:99:6:SysTick_Handler	8	static

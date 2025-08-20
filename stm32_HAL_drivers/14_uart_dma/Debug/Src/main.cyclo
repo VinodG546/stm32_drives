@@ -1,0 +1,7 @@
+../Src/main.c:27:5:main	1
+../Src/main.c:41:6:uart_init	2
+../Src/main.c:118:6:led_init	1
+../Src/main.c:133:6:DMA1_CH4_IRQHandler	1
+../Src/main.c:137:6:DMA1_CH5_IRQHandler	1
+../Src/main.c:141:6:SysTick_Handler	1
+../Src/main.c:145:6:Error_Handler	1

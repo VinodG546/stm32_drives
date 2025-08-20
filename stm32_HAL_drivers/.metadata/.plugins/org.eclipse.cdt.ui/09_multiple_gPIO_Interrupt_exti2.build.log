@@ -1,0 +1,10 @@
+14:58:43 **** Incremental Build of configuration Debug for project 09_multiple_gPIO_Interrupt_exti2 ****
+make -j12 all 
+arm-none-eabi-size  09_multiple_gPIO_Interrupt_exti2.elf 
+   text	   data	    bss	    dec	    hex	filename
+   3412	     12	   1652	   5076	   13d4	09_multiple_gPIO_Interrupt_exti2.elf
+Finished building: default.size.stdout
+ 
+
+14:58:43 Build Finished. 0 errors, 0 warnings. (took 281ms)
+

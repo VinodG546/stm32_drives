@@ -1,0 +1,10 @@
+15:13:53 **** Build of configuration Debug for project 03_uart_polling ****
+make -j12 all 
+arm-none-eabi-size  03_uart_polling.elf 
+   text	   data	    bss	    dec	    hex	filename
+   9884	    104	   2048	  12036	   2f04	03_uart_polling.elf
+Finished building: default.size.stdout
+ 
+
+15:13:54 Build Finished. 0 errors, 0 warnings. (took 290ms)
+

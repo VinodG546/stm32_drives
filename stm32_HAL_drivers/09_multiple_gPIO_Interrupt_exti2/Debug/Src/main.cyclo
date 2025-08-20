@@ -1,0 +1,6 @@
+../Src/main.c:11:5:main	1
+../Src/main.c:21:6:gpio_interrupt_init	1
+../Src/main.c:55:6:HAL_GPIO_EXTI_Callback	3
+../Src/main.c:65:6:EXTI0_IRQHandler	1
+../Src/main.c:69:6:EXTI15_10_IRQHandler	1
+../Src/main.c:73:6:SysTick_Handler	1

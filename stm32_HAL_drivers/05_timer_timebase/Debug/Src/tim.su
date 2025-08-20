@@ -1,0 +1,2 @@
+../Src/tim.c:17:6:tim_timebase_init	16	static
+../Src/tim.c:37:6:TIM3_IRQHandler	8	static

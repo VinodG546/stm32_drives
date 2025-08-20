@@ -1,0 +1,98 @@
+#include "stm32l4xx_hal.h"
+#include<stdio.h>
+
+#define RTC_ASYNCH_PREDIV    0x7f
+#define RTC_SYNCH_PREDIV  0xf9
+
+#define BKP_FLAG 	0x8888
+
+uint8_t time[15];
+uint8_t date[15];
+
+
+RTC_HandleTypeDef rtc_handle;
+
+int main(void)
+{
+    HAL_Init();
+    __HAL_RTC_RESET_HANDLE_STATE(&rtc_handle);
+    rtc_init();
+    if(HAL_RTCEx_BKUPRead(&rtc_handle,RTC_BKP_DR0)!=BKP_FLAG)
+    {
+    	rtc_calender_config();
+    }
+    while (1)
+    {
+    	rtc_calender_show(time,date);
+    }
+}
+
+void rtc_init(){
+	RCC_OscInitTypeDef RCC_Oscinit;
+	RCC_PeriphCLKInitTypeDef RCC_pclk;
+
+	RCC_Oscinit.OscillatorType = RCC_OSCILLATORTYPE_LSI | RCC_OSCILLATORTYPE_LSE;
+	RCC_Oscinit.LSEState = RCC_LSE_OFF;
+	RCC_Oscinit.LSIState =RCC_LSI_ON;
+
+	HAL_RCC_OscConfig(&RCC_Oscinit);
+
+	RCC_pclk.PeriphClockSelection = RCC_PERIPHCLK_RTC;
+	RCC_pclk.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
+
+	HAL_RCCEx_PeriphCLKConfig(&RCC_pclk);
+
+	__HAL_RCC_RTC_ENABLE();
+
+	rtc_handle.Instance = RTC;
+	rtc_handle.Init.HourFormat = RTC_HOURFORMAT_24;
+	rtc_handle.Init.AsynchPrediv = 0x7F;	//127
+	rtc_handle.Init.SynchPrediv = 0xF9;		//249
+	rtc_handle.Init.OutPut = RTC_OUTPUT_DISABLE;
+
+	HAL_RTC_Init(&rtc_handle);
+
+}
+
+
+void rtc_calender_config(){
+	RTC_DateTypeDef datestruct;
+	RTC_TimeTypeDef timestrcut;
+
+	datestruct.Year = 0x25;
+	datestruct.Month = RTC_MONTH_AUGUST;
+	datestruct.Date = 0x19;
+	datestruct.WeekDay = RTC_WEEKDAY_TUESDAY;
+
+	HAL_RTC_SetDate(&rtc_handle, &datestruct, RTC_FORMAT_BCD);
+
+	timestrcut.Hours = 9;
+	timestrcut.Minutes = 0x00;
+	timestrcut.Seconds = 0x00;
+	timestrcut.TimeFormat = RTC_HOURFORMAT12_AM;
+	timestrcut.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
+	timestrcut.StoreOperation = RTC_STOREOPERATION_RESET;
+
+	HAL_RTC_SetTime(&rtc_handle, &timestrcut, RTC_FORMAT_BCD);
+
+	//Write to Backup Register
+	HAL_RTCEx_BKUPWrite(&rtc_handle, RTC_BKP_DR0, BKP_FLAG);
+
+}
+
+void rtc_calender_show(uints_t *showtime,uint8_t *showdate){
+	RTC_DateTypeDef datestruct;
+	RTC_TimeTypeDef timestrcut;
+
+	HAL_RTC_GetDate(&rtc_handle, &datestruct, RTC_FORMAT_BIN);
+	HAL_RTC_GetTime(&rtc_handle, &timestrcut, RTC_FORMAT_BIN);
+
+	sprintf((char*)time,"%02d:%02d:%02d",timestrcut.Hours,timestrcut.Minutes,timestrcut.Seconds);
+	sprintf((char*)date,"%02d:%02d:%02d",datestruct.Date,datestruct.Month,datestruct.Year);
+
+}
+void SysTick_Handler(void)
+{
+    HAL_IncTick();
+}
+

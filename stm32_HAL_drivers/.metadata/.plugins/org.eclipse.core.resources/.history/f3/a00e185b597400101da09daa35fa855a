@@ -1,0 +1,26 @@
+
+#include "stm32l4xx_hal.h"
+#include <stdint.h>
+#define BTN_PIN GPIO_PIN_13
+//BTN = PC13 , BUS = AHB1EN bit0
+//LED = PA5  , BUS = AHB1EN bit2
+int counter;
+
+int main(void)
+{
+	//1.configure PA5 as output pin
+
+	// Enable clock
+
+	__HAL_RCC_GPIOA_CLK_ENABLE();
+
+	GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+	//GPIO_InitStruct.Pin=
+	//2.configure Pc13 as input pin
+
+	__HAL_RCC_GPIOC_CLK_ENABLE()
+   while(1){
+	   counter++;
+   }
+}

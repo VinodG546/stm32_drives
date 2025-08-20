@@ -1,0 +1,10 @@
+15:29:14 **** Build of configuration Debug for project 08_gPIO_Interrupt_exti ****
+make -j12 all 
+arm-none-eabi-size  08_gPIO_Interrupt_exti.elf 
+   text	   data	    bss	    dec	    hex	filename
+   3304	     12	   1644	   4960	   1360	08_gPIO_Interrupt_exti.elf
+Finished building: default.size.stdout
+ 
+
+15:29:14 Build Finished. 0 errors, 0 warnings. (took 211ms)
+
