@@ -98,6 +98,7 @@ int main(void)
  80001d6:	4b0b      	ldr	r3, [pc, #44]	@ (8000204 <main+0x38>)
  80001d8:	603b      	str	r3, [r7, #0]
 
+    //enabling adc pclk
     *pRCCAhb2enr |= 1<<13;
  80001da:	683b      	ldr	r3, [r7, #0]
  80001dc:	681b      	ldr	r3, [r3, #0]
@@ -105,6 +106,7 @@ int main(void)
  80001e2:	683b      	ldr	r3, [r7, #0]
  80001e4:	601a      	str	r2, [r3, #0]
 
+    //enabling some random pin just to ckeck the clock working or not
     *pAdcCrReg |= (1<<31);
  80001e6:	687b      	ldr	r3, [r7, #4]
  80001e8:	681b      	ldr	r3, [r3, #0]
