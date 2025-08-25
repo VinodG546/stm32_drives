@@ -1,5 +1,0 @@
-"./Src/001_blink_led.o"
-"./Src/syscalls.o"
-"./Src/sysmem.o"
-"./Startup/startup_stm32l476rgtx.o"
-"./drivers/src/stm32l4xx_gpio_driver.o"

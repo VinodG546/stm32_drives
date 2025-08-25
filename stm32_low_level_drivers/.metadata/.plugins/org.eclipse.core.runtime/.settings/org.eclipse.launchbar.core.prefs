@@ -1,8 +1,7 @@
 LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/arch=x86_64
 LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/name=Local
 LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/os=win32
-configDescList=org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:01_perpheral_clock_enable Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:02_driver1 Debug
+configDescList=org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:01_perpheral_clock_enable Debug
 eclipse.preferences.version=1
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:01_perpheral_clock_enable\ Debug/activeLaunchMode=debug
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:01_perpheral_clock_enable\ Debug/activeLaunchTarget=null\:---
-org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:02_driver1\ Debug/activeLaunchMode=run

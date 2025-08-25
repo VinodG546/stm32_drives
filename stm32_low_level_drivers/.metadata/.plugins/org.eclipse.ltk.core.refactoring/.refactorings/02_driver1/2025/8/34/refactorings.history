@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename resource &apos;02_driver1/Src/001_blink_led&apos; to &apos;001_blink_led.c&apos;" description="Rename resource &apos;001_blink_led&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Src/001_blink_led" name="001_blink_led.c" stamp="1755864421565" updateReferences="true"/>
-</session>

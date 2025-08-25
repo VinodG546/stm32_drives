@@ -1,21 +1,14 @@
-17:55:37 **** Incremental Build of configuration Debug for project 02_driver1 ****
+19:46:14 **** Incremental Build of configuration Debug for project 01_perpheral_clock_enable ****
 make -j12 all 
-arm-none-eabi-gcc "../Src/001_blink_led.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -c -I../Inc -I"C:/Users/VINOD/STM32CubeIDE/stm32_low_level_drivers/02_driver1/drivers/inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/001_blink_led.d" -MT"Src/001_blink_led.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/001_blink_led.o"
-arm-none-eabi-gcc -o "02_driver1.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\VINOD\STM32CubeIDE\stm32_low_level_drivers\02_driver1\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="02_driver1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
-Finished building target: 02_driver1.elf
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/main.o"
+arm-none-eabi-gcc -o "01_perpheral_clock_enable.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\VINOD\STM32CubeIDE\stm32_low_level_drivers\01_perpheral_clock_enable\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="01_perpheral_clock_enable.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: 01_perpheral_clock_enable.elf
  
-arm-none-eabi-size  02_driver1.elf 
-arm-none-eabi-objdump -h -S 02_driver1.elf  > "02_driver1.list"
+arm-none-eabi-size  01_perpheral_clock_enable.elf 
+arm-none-eabi-objdump -h -S 01_perpheral_clock_enable.elf  > "01_perpheral_clock_enable.list"
    text	   data	    bss	    dec	    hex	filename
-   1624	      0	   1568	   3192	    c78	02_driver1.elf
+    708	      0	   1568	   2276	    8e4	01_perpheral_clock_enable.elf
 Finished building: default.size.stdout
  
-Finished building: 02_driver1.list
- 
-17:55:40 **** Incremental Build of configuration Debug for project 02_driver1 ****
-make -j12 all 
-arm-none-eabi-size  02_driver1.elf 
-   text	   data	    bss	    dec	    hex	filename
-   1624	      0	   1568	   3192	    c78	02_driver1.elf
-Finished building: default.size.stdout
+Finished building: 01_perpheral_clock_enable.list
  
