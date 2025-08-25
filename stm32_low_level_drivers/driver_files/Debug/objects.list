@@ -1,4 +1,4 @@
-"./Src/02_ultrasonic_sensor.o"
+"./Src/04_toggle_led_using_push_button.o"
 "./Src/syscalls.o"
 "./Src/sysmem.o"
 "./Startup/startup_stm32l476rgtx.o"

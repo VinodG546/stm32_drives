@@ -5,17 +5,17 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../Src/02_ultrasonic_sensor.c \
+../Src/04_toggle_led_using_push_button.c \
 ../Src/syscalls.c \
 ../Src/sysmem.c 
 
 OBJS += \
-./Src/02_ultrasonic_sensor.o \
+./Src/04_toggle_led_using_push_button.o \
 ./Src/syscalls.o \
 ./Src/sysmem.o 
 
 C_DEPS += \
-./Src/02_ultrasonic_sensor.d \
+./Src/04_toggle_led_using_push_button.d \
 ./Src/syscalls.d \
 ./Src/sysmem.d 
 
@@ -27,7 +27,7 @@ Src/%.o Src/%.su Src/%.cyclo: ../Src/%.c Src/subdir.mk
 clean: clean-Src
 
 clean-Src:
-	-$(RM) ./Src/02_ultrasonic_sensor.cyclo ./Src/02_ultrasonic_sensor.d ./Src/02_ultrasonic_sensor.o ./Src/02_ultrasonic_sensor.su ./Src/syscalls.cyclo ./Src/syscalls.d ./Src/syscalls.o ./Src/syscalls.su ./Src/sysmem.cyclo ./Src/sysmem.d ./Src/sysmem.o ./Src/sysmem.su
+	-$(RM) ./Src/04_toggle_led_using_push_button.cyclo ./Src/04_toggle_led_using_push_button.d ./Src/04_toggle_led_using_push_button.o ./Src/04_toggle_led_using_push_button.su ./Src/syscalls.cyclo ./Src/syscalls.d ./Src/syscalls.o ./Src/syscalls.su ./Src/sysmem.cyclo ./Src/sysmem.d ./Src/sysmem.o ./Src/sysmem.su
 
 .PHONY: clean-Src
 
