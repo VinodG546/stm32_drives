@@ -243,9 +243,9 @@ typedef struct
 	volatile uint32_t TXDR;
 }I2C_RegDef_t;
 
-#define I2C1    ((I2C_RegDef_t*)I2C1_BASEADDR
-#define I2C2	((I2C_RegDef_t*)I2C2_BASEADDR
-#define I2C3	((I2C_RegDef_t*)I2C3_BASEADDR
+#define I2C1    ((I2C_RegDef_t*)I2C1_BASEADDR)
+#define I2C2	((I2C_RegDef_t*)I2C2_BASEADDR)
+#define I2C3	((I2C_RegDef_t*)I2C3_BASEADDR)
 
 //macros for enabling GPIOx RCC clock
 
@@ -349,6 +349,7 @@ typedef struct
 #define GPIOG_REG_RESET()  do{(RCC->AHB2RSTR |= (1<<6)); (RCC->AHB2RSTR &= ~(1<<6)); } while(0)
 #define GPIOH_REG_RESET()  do{(RCC->AHB2RSTR |= (1<<7)); (RCC->AHB2RSTR &= ~(1<<7)); } while(0)
 
+/********************** SPI Peripheral Reset Macros **********************/
 
 //macros to reset spix peripherals
 // Reset SPI1
@@ -360,6 +361,11 @@ typedef struct
 // Reset SPI3
 #define SPI3_REG_RESET()   do{ (RCC->APB1RSTR1 |= (1 << 15)); (RCC->APB1RSTR1 &= ~(1 << 15)); } while(0)
 
+/********************** I2C Peripheral Reset Macros **********************/
+
+#define I2C1_REG_RESET()     do{ (RCC->APB1RSTR1 |=  (1U << 21)); (RCC->APB1RSTR1 &= ~(1U << 21)); }while(0)
+#define I2C2_REG_RESET()     do{ (RCC->APB1RSTR1 |=  (1U << 22)); (RCC->APB1RSTR1 &= ~(1U << 22)); }while(0)
+#define I2C3_REG_RESET()     do{ (RCC->APB1RSTR1 |=  (1U << 23)); (RCC->APB1RSTR1 &= ~(1U << 23)); }while(0)
 
 
 #define GPIO_BASEADDR_TO_CODE(x)   ((x==GPIOA) ? 0:\
@@ -371,6 +377,7 @@ typedef struct
 								   (x==GPIOG) ? 6:\
 								   (x==GPIOH) ? 7: 0)
 
+/********************** SPI Register Flag Positions **********************/
 
 //macros for SPI CR1 register bits
 #define SPI_CR1_CPHA    0
@@ -403,7 +410,7 @@ typedef struct
 #define SPI_SR_RXNE       0
 #define SPI_SR_TXE        1
 #define SPI_SR_BSY        7
-
+//***************************generic macros********************************
 //generic macros
 #define ENABLE          1
 #define DISABLE         0
@@ -413,6 +420,9 @@ typedef struct
 #define GPIO_PIN_RESET  RESET
 #define FLAG_RESET      RESET
 #define FLAG_SET        SET
+
+
+/********************** I2C Register Flag Positions **********************/
 
 //I2C peripheral macros for bits
 //CR1 register
@@ -449,7 +459,6 @@ typedef struct
 
 
 //ISR flags
-/********************** I2C_ISR Register Flag Positions **********************/
 
 #define I2C_ISR_TXE        0   // Transmit data register empty
 #define I2C_ISR_TXIS       1   // Transmit interrupt status
@@ -471,7 +480,7 @@ typedef struct
 #define I2C_ISR_DIR        16  // Transfer direction
 #define I2C_ISR_ADDCODE    17  // Address match code (bits 23:17)
 
-/********************** I2C_ICR Register Flag Positions **********************/
+//ICR flags
 
 #define I2C_ICR_ADDCF      3   // Clear ADDR flag
 #define I2C_ICR_NACKCF     4   // Clear NACK flag
@@ -483,6 +492,20 @@ typedef struct
 #define I2C_ICR_TIMOUTCF   12  // Clear Timeout flag
 #define I2C_ICR_ALERTCF    13  // Clear Alert flag
 
+//OAR1 flags
+#define I2c_OAR1_OA1EN		15
+#define I2c_OAR1_OA1MODE	10
+#define I2c_OAR1_OA1		0
+
+//OAR2 flgas
+#define I2c_OAR2_OA2		1
+#define I2c_OAR2_OA2MSK		8
+#define I2c_OAR2_OA2EN		15
+//RXDR register
+#define I2C_RXDR_RXDATA     0
+
+//TXDR register
+#define I2C_TXDR_TXDATA     0
 #endif
 
 
