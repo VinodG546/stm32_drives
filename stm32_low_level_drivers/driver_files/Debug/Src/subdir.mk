@@ -5,17 +5,17 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../Src/04_toggle_led_using_push_button.c \
+../Src/07_tx_esp32.c \
 ../Src/syscalls.c \
 ../Src/sysmem.c 
 
 OBJS += \
-./Src/04_toggle_led_using_push_button.o \
+./Src/07_tx_esp32.o \
 ./Src/syscalls.o \
 ./Src/sysmem.o 
 
 C_DEPS += \
-./Src/04_toggle_led_using_push_button.d \
+./Src/07_tx_esp32.d \
 ./Src/syscalls.d \
 ./Src/sysmem.d 
 
@@ -27,7 +27,7 @@ Src/%.o Src/%.su Src/%.cyclo: ../Src/%.c Src/subdir.mk
 clean: clean-Src
 
 clean-Src:
-	-$(RM) ./Src/04_toggle_led_using_push_button.cyclo ./Src/04_toggle_led_using_push_button.d ./Src/04_toggle_led_using_push_button.o ./Src/04_toggle_led_using_push_button.su ./Src/syscalls.cyclo ./Src/syscalls.d ./Src/syscalls.o ./Src/syscalls.su ./Src/sysmem.cyclo ./Src/sysmem.d ./Src/sysmem.o ./Src/sysmem.su
+	-$(RM) ./Src/07_tx_esp32.cyclo ./Src/07_tx_esp32.d ./Src/07_tx_esp32.o ./Src/07_tx_esp32.su ./Src/syscalls.cyclo ./Src/syscalls.d ./Src/syscalls.o ./Src/syscalls.su ./Src/sysmem.cyclo ./Src/sysmem.d ./Src/sysmem.o ./Src/sysmem.su
 
 .PHONY: clean-Src
 

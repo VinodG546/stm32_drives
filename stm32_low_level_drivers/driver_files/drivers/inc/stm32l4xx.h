@@ -1,3 +1,5 @@
+#ifndef STM32L4XX_H
+#define STM32L4XX_H
 #include <stdint.h>
 
 #define     FLASH_BASEADDR                0x08000000U   //flash memory starting address
@@ -11,8 +13,26 @@
 #define     AHB1_BASEADDR                 0x40020000U
 #define     AHB2_BASEADDR                 0x48000000U
 
-//base addresses of peripheral of AHB2  bus
 
+
+//*******************************************************
+//NVIC ISERx register addrs and ICERx register addrs
+#define NVIC_ISER0  ((volatile uint32_t*)0xE000E100)
+#define NVIC_ISER1  ((volatile uint32_t*)0xE000E104)
+#define NVIC_ISER2  ((volatile uint32_t*)0xE000E108)
+#define NVIC_ISER3  ((volatile uint32_t*)0xE000E10c)
+
+#define NVIC_ICER0  ((volatile uint32_t*)0xE000E180)
+#define NVIC_ICER1  ((volatile uint32_t*)0xE000E184)
+#define NVIC_ICER2  ((volatile uint32_t*)0xE000E188)
+#define NVIC_ICER3  ((volatile uint32_t*)0xE000E18c)
+
+//prp registers
+#define NVIC_PR_BASE_ADDR  ((volatile uint32_t*)0xE000E400)
+
+#define NO_PR_BITS_IMPLEMENTED      4
+
+//base addresses of peripheral of AHB2  bus
 #define     GPIOA_BASEADDR				  0x48000000U
 #define     GPIOB_BASEADDR				  0x48000400U
 #define     GPIOC_BASEADDR                0x48000800U
@@ -145,6 +165,88 @@ typedef struct
 
 #define    RCC   ((RCC_RegDef_t*)RCC_BASEADDR)
 
+//EXTI registers structure
+typedef struct
+{
+    volatile uint32_t IMR1;    /*!< Interrupt mask register 1,      Address offset: 0x00 */
+    volatile uint32_t EMR1;    /*!< Event mask register 1,          Address offset: 0x04 */
+    volatile uint32_t RTSR1;   /*!< Rising trigger selection reg 1, Address offset: 0x08 */
+    volatile uint32_t FTSR1;   /*!< Falling trigger selection reg 1,Address offset: 0x0C */
+    volatile uint32_t SWIER1;  /*!< Software interrupt event reg 1, Address offset: 0x10 */
+    volatile uint32_t PR1;     /*!< Pending register 1,             Address offset: 0x14 */
+    uint32_t RESERVED1[2];     /*!< Reserved                        Address offset: 0x18–0x1C */
+    volatile uint32_t IMR2;    /*!< Interrupt mask register 2,      Address offset: 0x20 */
+    volatile uint32_t EMR2;    /*!< Event mask register 2,          Address offset: 0x24 */
+    volatile uint32_t RTSR2;   /*!< Rising trigger selection reg 2, Address offset: 0x28 */
+    volatile uint32_t FTSR2;   /*!< Falling trigger selection reg 2,Address offset: 0x2C */
+    volatile uint32_t SWIER2;  /*!< Software interrupt event reg 2, Address offset: 0x30 */
+    volatile uint32_t PR2;     /*!< Pending register 2,             Address offset: 0x34 */
+} EXTI_RegDef_t;
+
+#define    EXTI  ((EXTI_RegDef_t*)EXTI_BASEADDR)
+
+//EXTI lines IRQ numbers
+#define IRQ_NO_EXTI0       6
+#define IRQ_NO_EXTI1       7
+#define IRQ_NO_EXTI2       8
+#define IRQ_NO_EXTI3       9
+#define IRQ_NO_EXTI4       10
+#define IRQ_NO_EXTI9_5     23
+#define IRQ_NO_EXTI15_10   40
+
+
+
+typedef struct
+{
+    volatile uint32_t MEMRMP;       /*!< SYSCFG memory remap register,              Address offset: 0x00 */
+    volatile uint32_t CFGR1;        /*!< SYSCFG configuration register 1,           Address offset: 0x04 */
+    volatile uint32_t EXTICR[4];    /*!< SYSCFG external interrupt config registers,0x08–0x14 */
+    volatile uint32_t SCSR;         /*!< SYSCFG SRAM2 control and status register,  Address offset: 0x18 */
+    volatile uint32_t CFGR2;        /*!< SYSCFG configuration register 2,           Address offset: 0x1C */
+    volatile uint32_t SWPR;         /*!< SYSCFG SRAM2 write protection register,    Address offset: 0x20 */
+    volatile uint32_t SKR;          /*!< SYSCFG SRAM2 key register,                 Address offset: 0x24 */
+} SYSCFG_RegDef_t;
+
+#define   SYSCFG    ((SYSCFG_RegDef_t*)SYSCFG_BASEADDR)
+
+typedef struct
+{
+	volatile uint32_t CR1;
+	volatile uint32_t CR2;
+	volatile uint32_t SR;
+	volatile uint32_t DR;
+	volatile uint32_t CRCPR;
+	volatile uint32_t RXCRCPR;
+	volatile uint32_t RXCRCR;
+	volatile uint32_t TXCRCR;
+	volatile uint32_t I2SCFGR;
+	volatile uint32_t I2SPR;
+}SPI_RegDef_t;
+
+
+#define SPI1  ((SPI_RegDef_t*)SPI1_BASEADDR)
+#define SPI2  ((SPI_RegDef_t*)SPI2_BASEADDR)
+#define SPI3  ((SPI_RegDef_t*)SPI3_BASEADDR)
+
+typedef struct
+{
+	volatile uint32_t CR1;
+	volatile uint32_t CR2;
+	volatile uint32_t OAR1;
+	volatile uint32_t OAR2;
+	volatile uint32_t TIMINGR;
+	volatile uint32_t TIMEOUTR;
+	volatile uint32_t ISR;
+	volatile uint32_t ICR;
+	volatile uint32_t PECR;
+	volatile uint32_t RXDR;
+	volatile uint32_t TXDR;
+}I2C_RegDef_t;
+
+#define I2C1    ((I2C_RegDef_t*)I2C1_BASEADDR
+#define I2C2	((I2C_RegDef_t*)I2C2_BASEADDR
+#define I2C3	((I2C_RegDef_t*)I2C3_BASEADDR
+
 //macros for enabling GPIOx RCC clock
 
 #define GPIOA_PCLK_EN()    (RCC->AHB2ENR |= (1 << 0))
@@ -247,6 +349,61 @@ typedef struct
 #define GPIOG_REG_RESET()  do{(RCC->AHB2RSTR |= (1<<6)); (RCC->AHB2RSTR &= ~(1<<6)); } while(0)
 #define GPIOH_REG_RESET()  do{(RCC->AHB2RSTR |= (1<<7)); (RCC->AHB2RSTR &= ~(1<<7)); } while(0)
 
+
+//macros to reset spix peripherals
+// Reset SPI1
+#define SPI1_REG_RESET()   do{ (RCC->APB2RSTR |= (1 << 12)); (RCC->APB2RSTR &= ~(1 << 12)); } while(0)
+
+// Reset SPI2
+#define SPI2_REG_RESET()   do{ (RCC->APB1RSTR1 |= (1 << 14)); (RCC->APB1RSTR1 &= ~(1 << 14)); } while(0)
+
+// Reset SPI3
+#define SPI3_REG_RESET()   do{ (RCC->APB1RSTR1 |= (1 << 15)); (RCC->APB1RSTR1 &= ~(1 << 15)); } while(0)
+
+
+
+#define GPIO_BASEADDR_TO_CODE(x)   ((x==GPIOA) ? 0:\
+								   (x==GPIOB) ? 1:\
+								   (x==GPIOC) ? 2:\
+								   (x==GPIOD) ? 3:\
+								   (x==GPIOE) ? 4:\
+								   (x==GPIOF) ? 5:\
+								   (x==GPIOG) ? 6:\
+								   (x==GPIOH) ? 7: 0)
+
+
+//macros for SPI CR1 register bits
+#define SPI_CR1_CPHA    0
+#define SPI_CR1_CPOL    1
+#define SPI_CR1_MSTR    2
+#define SPI_CR1_BR      3
+#define SPI_CR1_SPE     6
+#define SPI_CR1_LSBFIRST 7
+#define SPI_CR1_SSI     8
+#define SPI_CR1_SSM     9
+#define SPI_CR1_RXONLY  10
+#define SPI_CR1_CRCL    11
+#define SPI_CR1_CRCNEXT  12
+#define SPI_CR1_CRCEN    13
+#define SPI_CR1_BIBIOE   14
+#define SPI_CR1_BIDIMODE  15
+
+//macros for SPI CR2 register
+#define SPI_CR2_RXDMAEN   0
+#define SPI_CR2_TXDMAEN   1
+#define SPI_CR2_SSOE      2
+#define SPI_CR2_NSSP      3
+#define SPI_CR2_FRF       4
+#define SPI_CR2_ERRIE     5
+#define SPI_CR2_RXNEIE    6
+#define SPI_CR2_TXEIE     7
+
+
+//macros for SPI SR register
+#define SPI_SR_RXNE       0
+#define SPI_SR_TXE        1
+#define SPI_SR_BSY        7
+
 //generic macros
 #define ENABLE          1
 #define DISABLE         0
@@ -254,9 +411,78 @@ typedef struct
 #define RESET           DISABLE
 #define GPIO_PIN_SET    SET
 #define GPIO_PIN_RESET  RESET
+#define FLAG_RESET      RESET
+#define FLAG_SET        SET
+
+//I2C peripheral macros for bits
+//CR1 register
+#define I2C_CR1_PE             0
+#define I2C_CR1_TXIE           1
+#define I2C_CR1_RXIE           2
+#define I2C_CR1_ADDRIE         3
+#define I2C_CR1_NACKIE  		4
+#define I2C_CR1_SOPIE   		5
+#define I2C_CR1_TCIE    		6
+#define I2C_CR1_ERRIE   		7
+#define I2C_CR1_DNF     		8
+#define I2C_CR1_ANFOFF  		12
+#define I2C_CR1_TXDMAEN 		14
+#define I2C_CR1_RXDMAEN 		15
+#define I2C_CR1_SBC     		16
+#define I2C_CR1_NOSTRETCH		17
+#define I2C_CR1_WUPEN			18
+#define I2C_CR1_GCEN			19
+#define I2C_CR1_PECEN			23
+
+//CR2 flags
+#define I2C_CR2_SADD       		0
+#define I2C_CR2_RD_WRN 			10
+#define I2C_CR2_ADD10			12
+#define I2C_CR2_HEAD10R			12
+#define I2C_CR2_START			13
+#define I2C_CR2_STOP			14
+#define I2C_CR2_NACK			15
+#define I2C_CR2_NBYTES			16
+#define I2C_CR2_RELOAD			24
+#define I2C_CR2_AUTOEND         25
+#define I2C_CR2_PECBYTE			26
 
 
+//ISR flags
+/********************** I2C_ISR Register Flag Positions **********************/
 
+#define I2C_ISR_TXE        0   // Transmit data register empty
+#define I2C_ISR_TXIS       1   // Transmit interrupt status
+#define I2C_ISR_RXNE       2   // Receive data register not empty
+#define I2C_ISR_ADDR       3   // Address matched (slave mode)
+#define I2C_ISR_NACKF      4   // NACK received
+#define I2C_ISR_STOPF      5   // STOP detection flag
+#define I2C_ISR_TC         6   // Transfer complete
+#define I2C_ISR_TCR        7   // Transfer complete reload
 
+#define I2C_ISR_BERR       8   // Bus error
+#define I2C_ISR_ARLO       9   // Arbitration lost
+#define I2C_ISR_OVR        10  // Overrun/Underrun
+#define I2C_ISR_PECERR     11  // PEC error
+#define I2C_ISR_TIMEOUT    12  // Timeout error
+#define I2C_ISR_ALERT      13  // SMBus alert
+
+#define I2C_ISR_BUSY       15  // Bus busy
+#define I2C_ISR_DIR        16  // Transfer direction
+#define I2C_ISR_ADDCODE    17  // Address match code (bits 23:17)
+
+/********************** I2C_ICR Register Flag Positions **********************/
+
+#define I2C_ICR_ADDCF      3   // Clear ADDR flag
+#define I2C_ICR_NACKCF     4   // Clear NACK flag
+#define I2C_ICR_STOPCF     5   // Clear STOP flag
+#define I2C_ICR_BERRCF     8   // Clear Bus error flag
+#define I2C_ICR_ARLOCF     9   // Clear Arbitration lost flag
+#define I2C_ICR_OVRCF      10  // Clear Overrun/Underrun flag
+#define I2C_ICR_PECCF      11  // Clear PEC error flag
+#define I2C_ICR_TIMOUTCF   12  // Clear Timeout flag
+#define I2C_ICR_ALERTCF    13  // Clear Alert flag
+
+#endif
 
 

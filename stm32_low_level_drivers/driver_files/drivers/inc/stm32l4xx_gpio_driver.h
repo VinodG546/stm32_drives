@@ -1,3 +1,7 @@
+
+#ifndef STM32L4XX_GPIO_DRIVER_H
+#define STM32L4XX_GPIO_DRIVER_H
+
 #include"stm32l4xx.h"
 //configuration structure for GPIO pin
 typedef struct
@@ -37,7 +41,8 @@ void GPIO_WriteToOutputPort(GPIO_RegDef_t *pGPIOx , uint32_t value);
 void GPIO_ToggleOutputPin(GPIO_RegDef_t *pGPIOx ,uint8_t  GPIO_PinNumber);
 
 //APIs for IRQ configuration  and  handling
-void GPIO_IRQConfig(uint8_t IRQNumber,uint8_t IRQPriority , uint8_t EnorDi);
+void GPIO_IRQ_interrupt_Config(uint8_t IRQNumber, uint8_t EnorDi);
+void GPIO_IRQ_priority_Config(uint8_t IRQNumber , uint8_t priority);
 void GPIO_IRQHandling(uint8_t GPIO_PinNumber);
 
 //GPIO pin numbers @GPIO_PIN_NUM
@@ -83,3 +88,4 @@ void GPIO_IRQHandling(uint8_t GPIO_PinNumber);
 #define GPIO_PIN_PD         2
 
 //
+#endif

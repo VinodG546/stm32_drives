@@ -36,7 +36,7 @@ void ultrasonic_init(void) {
     gpioTrig.GPIO_PinConfig.GPIO_PinSpeed = GPIO_HIGH_SPEED;
     gpioTrig.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_NO_PUPD;
     gpioTrig.GPIO_PinConfig.GPIO_PinOPType = GPIO_OP_TYPE_PP;
-    GPIO_PeriClockControl(GPIOA, ENABLE);
+
     GPIO_Init(&gpioTrig);
 
     // Configure Echo pin (input)
@@ -46,6 +46,8 @@ void ultrasonic_init(void) {
     gpioEcho.GPIO_PinConfig.GPIO_PinSpeed = GPIO_HIGH_SPEED;
     gpioEcho.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_NO_PUPD;
     GPIO_Init(&gpioEcho);
+
+    GPIO_PeriClockControl(GPIOA, ENABLE);
 }
 
 uint32_t ultrasonic_get_distance(void) {
@@ -62,7 +64,7 @@ uint32_t ultrasonic_get_distance(void) {
     while(!GPIO_ReadFromInputPin(GPIOA, ECHO_PIN));
 
     // Measure HIGH time of ECHO
-    while(GPIO_ReadFromInputPin(GPIOA, ECHO_PIN)) {
+    while(!GPIO_ReadFromInputPin(GPIOA, ECHO_PIN)) {
         timeCount++;
         delay_us(1);
     }
