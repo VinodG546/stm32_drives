@@ -24,7 +24,7 @@ typedef struct
 typedef struct
 {
 	I2C_RegDef_t		*pI2Cx;
-	I2C_Config_t	I2C_config;
+	I2C_Config_t	I2C_Config;
 }I2C_Handle_t;
 
 
@@ -96,9 +96,12 @@ void I2C_Deinit(I2C_RegDef_t *pI2Cx);
 /*
  * Data Send and Receive
  */
-void I2C_MasterSendData(I2C_RegDef_t *pI2Cx, uint8_t *pTxBuffer, uint32_t len,uint8_t SlaveAddr);
+uint32_t I2C_MasterSendData(I2C_RegDef_t *pI2Cx, uint8_t *pTxBuffer, uint32_t len,uint8_t SlaveAddr);
 void I2C_MasterReceiveData(I2C_RegDef_t *pI2Cx, uint8_t *pRxBuffer, uint32_t len,uint8_t SlaveAddr);
 
+//start and stop
+void I2C_GenerateStart(I2C_RegDef_t  *pI2Cx);
+void I2C_GenerateStop(I2C_RegDef_t  *pI2Cx);
 /*
  * Interrupt mode Transmission and Reception
  */

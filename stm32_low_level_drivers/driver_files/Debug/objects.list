@@ -1,4 +1,4 @@
-"./Src/07_tx_esp32.o"
+"./Src/i2c_rx.o"
 "./Src/syscalls.o"
 "./Src/sysmem.o"
 "./Startup/startup_stm32l476rgtx.o"

@@ -55,7 +55,7 @@ void SPI_Init(SPI_Handle_t *pSPIHandle)
     // Write to CR1
     pSPIHandle->pSPIx->CR1 = tempreg;
 
-    // Configure data size in CR2
+    // Configure data size in CR2c
     pSPIHandle->pSPIx->CR2 &= ~(0xF << SPI_CR2_DS);
     pSPIHandle->pSPIx->CR2 |= (pSPIHandle->SPIConfig.SPI_DataSize << SPI_CR2_DS);
 }
