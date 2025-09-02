@@ -1,11 +1,8 @@
 /*
- * stm32l4xx_spi_driver.c
+ * stm32l4xx_spi_new_driver.c
  *
- *  Created on: Aug 26, 2025
+ *  Created on: Sep 2, 2025
  *      Author: VINOD
- */
-/*
- * stm32l4xx_spi_driver.c (fixed)
  */
 #include "stm32l4xx_spi_driver.h"
 
@@ -26,15 +23,18 @@ void SPI_PeriClockControl(SPI_RegDef_t *pSPIx, uint8_t EnorDi)
 }
 
 // Init and deinit SPI
-void SPI_Init(SPI_Handle_t *pSPIHandle)
+void SPI_Slave_Init(SPI_Handle_t *pSPIHandle)
 {
-	SPI_PeriClockControl(pSPIHandle->pSPIx,ENABLE);
+    SPI_PeriClockControl(pSPIHandle->pSPIx, ENABLE);
+
     uint32_t tempreg = 0;
 
-    // Configure device mode
-    tempreg |= pSPIHandle->SPIConfig.SPI_DeviceMode << SPI_CR1_MSTR;
+    SPI_PeripheralControl(pSPIHandle->pSPIx, DISABLE);
 
-    // Configure bus config
+    // 1. Device Mode: Slave (MSTR = 0)
+    tempreg &= ~(1 << SPI_CR1_MSTR);
+
+    // 2. Bus Config
     if (pSPIHandle->SPIConfig.SPI_BusConfig == SPI_BUS_CONFIG_FD) {
         tempreg &= ~(1 << SPI_CR1_BIDIMODE);
     } else if (pSPIHandle->SPIConfig.SPI_BusConfig == SPI_BUS_CONFIG_HD) {
@@ -44,27 +44,28 @@ void SPI_Init(SPI_Handle_t *pSPIHandle)
         tempreg |= (1 << SPI_CR1_RXONLY);
     }
 
-    // Configure clock speed
-    tempreg |= pSPIHandle->SPIConfig.SPI_SclkSpeed << SPI_CR1_BR;
-
-    // Configure CPOL & CPHA
+    // 3. CPOL & CPHA
     tempreg |= pSPIHandle->SPIConfig.SPI_CPOL << SPI_CR1_CPOL;
     tempreg |= pSPIHandle->SPIConfig.SPI_CPHA << SPI_CR1_CPHA;
 
+    // 4. Software Slave Management (SSM)
     tempreg |= pSPIHandle->SPIConfig.SPI_SSM << SPI_CR1_SSM;
 
-    // Write to CR1
+    // Write CR1
     pSPIHandle->pSPIx->CR1 = tempreg;
 
-    if (pSPIHandle->pSPIx->CR1 & (1 << SPI_CR1_SSM)) {
-            	pSPIHandle->pSPIx->CR1 |= (1 << SPI_CR1_SSI);
-     }
-    // Configure data size in CR2c
+    // 5. Data Size in CR2
     pSPIHandle->pSPIx->CR2 &= ~(0xF << SPI_CR2_DS);
     pSPIHandle->pSPIx->CR2 |= (pSPIHandle->SPIConfig.SPI_DataSize << SPI_CR2_DS);
 
-}
+    // If software slave management enabled
+    if (pSPIHandle->pSPIx->CR1 & (1 << SPI_CR1_SSM)) {
+        // As slave, we must force SSI = 0 to be “selected”
+        pSPIHandle->pSPIx->CR1 &= ~(1 << SPI_CR1_SSI);
+    }
 
+    SPI_PeripheralControl(pSPIHandle->pSPIx, ENABLE);
+}
 void SPI_DeInit(SPI_RegDef_t *pSPIx)
 {
     if (pSPIx == SPI1) {
@@ -189,3 +190,5 @@ void SPI_IRQHandling(SPI_Handle_t *pHandle)
 {
     // TODO: handle SPI interrupts
 }
+
+
