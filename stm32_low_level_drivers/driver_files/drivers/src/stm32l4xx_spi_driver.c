@@ -30,6 +30,7 @@ void SPI_Init(SPI_Handle_t *pSPIHandle)
 {
 	SPI_PeriClockControl(pSPIHandle->pSPIx,ENABLE);
     uint32_t tempreg = 0;
+    SPI_PeripheralControl(SPI1 , DISABLE);
 
     // Configure device mode
     tempreg |= pSPIHandle->SPIConfig.SPI_DeviceMode << SPI_CR1_MSTR;
@@ -52,17 +53,18 @@ void SPI_Init(SPI_Handle_t *pSPIHandle)
     tempreg |= pSPIHandle->SPIConfig.SPI_CPHA << SPI_CR1_CPHA;
 
     tempreg |= pSPIHandle->SPIConfig.SPI_SSM << SPI_CR1_SSM;
-
     // Write to CR1
     pSPIHandle->pSPIx->CR1 = tempreg;
 
-    if (pSPIHandle->pSPIx->CR1 & (1 << SPI_CR1_SSM)) {
-            	pSPIHandle->pSPIx->CR1 |= (1 << SPI_CR1_SSI);
-     }
-    // Configure data size in CR2c
+    // Configure data size in CR2
     pSPIHandle->pSPIx->CR2 &= ~(0xF << SPI_CR2_DS);
     pSPIHandle->pSPIx->CR2 |= (pSPIHandle->SPIConfig.SPI_DataSize << SPI_CR2_DS);
 
+    if(pSPIHandle->pSPIx->CR1 & (1 << SPI_CR1_SSM)) {
+    	        pSPIHandle->pSPIx->CR1 |= (1 << SPI_CR1_SSI);
+    }
+
+    SPI_PeripheralControl(SPI1 , ENABLE);
 }
 
 void SPI_DeInit(SPI_RegDef_t *pSPIx)
