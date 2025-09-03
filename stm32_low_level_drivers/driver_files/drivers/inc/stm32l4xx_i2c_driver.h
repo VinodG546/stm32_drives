@@ -9,6 +9,11 @@
 #define INC_STM32L4XX_I2C_DRIVER_H_
 
 #include"stm32l4xx.h"
+#include <stddef.h>
+typedef struct I2C_Handle_t I2C_Handle_t;
+
+// Application callback type definition
+typedef void (*I2C_AppCallback_t)(I2C_Handle_t *pI2CHandle, uint8_t AppEv);
 
 typedef struct
 {
@@ -21,17 +26,25 @@ typedef struct
 /*
  * Handle structure for I2Cx peripheral
  */
-typedef struct
+struct I2C_Handle_t
 {
 	I2C_RegDef_t		*pI2Cx;
 	I2C_Config_t	I2C_Config;
-}I2C_Handle_t;
+	// Application state variables
+	uint8_t      *pTxBuffer; // Pointer to Tx buffer
+	uint8_t      *pRxBuffer; // Pointer to Rx buffer
+	uint32_t      TxLen;     // Length of Tx data
+	uint32_t      RxLen;     // Length of Rx data
+	uint8_t       TxRxState; // Communication state
+	uint8_t       DevAddr;   // Slave address being communicated with
+	I2C_AppCallback_t   ApplicationCallback;
+};
 
 
 /*
  * I2C application states
  */
-#define I2C_BUSY    1
+#define I2C_BUSY    				3
 #define I2C_READY 					0
 #define I2C_BUSY_IN_RX 				1
 #define I2C_BUSY_IN_TX 				2
@@ -80,6 +93,16 @@ typedef struct
 #define I2C_DISABLE_SR  	RESET
 #define I2C_ENABLE_SR   	SET
 
+#define I2C_EV_TX_CMPLT  	 	0
+#define I2C_EV_RX_CMPLT  	 	1
+#define I2C_EVENT_ERROR           2
+#define I2C_ERROR_BERR 	 		3
+#define I2C_ERROR_ARLO  		4
+#define I2C_ERROR_AF    		5
+#define I2C_ERROR_OVR   		6
+#define I2C_ERROR_TIMEOUT 		7
+#define I2C_EV_DATA_REQ         8
+#define I2C_EV_DATA_RCV         9
 
 /****************************************API's for I2C drivers************************************************************/
 /*
@@ -99,6 +122,9 @@ void I2C_Deinit(I2C_RegDef_t *pI2Cx);
 uint32_t I2C_MasterSendData(I2C_RegDef_t *pI2Cx, uint8_t *pTxBuffer, uint32_t len,uint8_t SlaveAddr);
 void I2C_MasterReceiveData(I2C_RegDef_t *pI2Cx, uint8_t *pRxBuffer, uint32_t len,uint8_t SlaveAddr);
 
+uint8_t I2C_MasterSendData_IT(I2C_Handle_t *pI2CHandle,uint8_t *pTxBuffer, uint32_t Len, uint8_t SlaveAddr);
+uint8_t I2C_MasterReceiveData_IT(I2C_Handle_t *pI2CHandle,uint8_t *pRxBuffer, uint32_t Len, uint8_t SlaveAddr);
+
 //start and stop
 void I2C_GenerateStart(I2C_RegDef_t  *pI2Cx);
 void I2C_GenerateStop(I2C_RegDef_t  *pI2Cx);
@@ -109,11 +135,9 @@ void I2C_GenerateStop(I2C_RegDef_t  *pI2Cx);
 /*
  * IRQ Configuration and ISR handling
  */
-void I2C_IRQInterruptConfig(uint8_t IRQNumber, uint8_t EnorDi);
-uint8_t I2C_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority);
-
-
-void I2C_IRQHandling(I2C_RegDef_t *pI2CHandle);
+void I2C_IRQConfig(uint8_t IRQNumber, uint8_t EnorDi);
+void I2C_IRQ_priority_Config(uint8_t IRQNumber,uint8_t priority);
+void I2C_IRQHandling(I2C_Handle_t *pI2CHandle);
 
 /*
  * Other Peripheral Control API's

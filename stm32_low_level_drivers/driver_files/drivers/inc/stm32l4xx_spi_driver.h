@@ -26,6 +26,12 @@ typedef struct {
 typedef struct {
     SPI_RegDef_t *pSPIx;
     SPI_Config_t SPIConfig;
+    uint8_t 		*pTxBuffer;
+	uint8_t 		*pRxBuffer;
+	uint32_t 		TxLen;
+	uint32_t 		RxLen;
+	uint8_t 		TxState;
+	uint8_t         RxState;
 } SPI_Handle_t;
 
 #define SPI_DEVICE_MODE_MASTER   1
@@ -61,6 +67,17 @@ typedef struct {
 #define SPI_RXNE_FLAG            (1 << SPI_SR_RXNE)
 #define SPI_BUSY_FLAG            (1 << SPI_SR_BSY)
 
+#define I2C_EV_TX_CMPLT  	 	0
+#define I2C_EV_RX_CMPLT  	 	1
+#define I2C_EV_STOP       		2
+#define I2C_ERROR_BERR 	 		3
+#define I2C_ERROR_ARLO  		4
+#define I2C_ERROR_AF    		5
+#define I2C_ERROR_OVR   		6
+#define I2C_ERROR_TIMEOUT 		7
+#define I2C_EV_DATA_REQ         8
+#define I2C_EV_DATA_RCV         9
+
 // ✅ Correct DS bit position in CR2
 #define SPI_CR2_DS               8
 
@@ -68,7 +85,9 @@ typedef struct {
 void SPI_PeriClockControl(SPI_RegDef_t *pSPIx, uint8_t EnorDi);
 
 // Init and deinit SPI
+void SPI_Slave_Init(SPI_Handle_t *pSPIHandle);
 void SPI_Init(SPI_Handle_t *pSPIHandle);
+
 void SPI_DeInit(SPI_RegDef_t *pSPIx);
 
 // Data send and receive
@@ -80,6 +99,10 @@ void SPI_IRQ_interrupt_Config(uint8_t IRQNumber, uint8_t EnorDi);
 void SPI_IRQ_priority_Config(uint8_t IRQNumber, uint8_t priority);
 void SPI_IRQHandling(SPI_Handle_t *pHandle);
 void  SPI_SSOEConfig(SPI_RegDef_t *pSPIx, uint8_t EnOrDi);
+uint8_t SPI_ReceiveData_IT(SPI_Handle_t *pSPIHandle, uint8_t *pRxBuffer, uint32_t len);
+uint8_t SPI_SendData_IT(SPI_Handle_t *pSPIHandle, uint8_t *pTxBuffer, uint32_t len);
+void spi_rxe_IT_handle(SPI_Handle_t *pSPIHandle);
+void spi_txe_IT_handle(SPI_Handle_t *pSPIHandle);
 
 uint8_t SPI_GetFlagStatus(SPI_RegDef_t *pSPIx, uint32_t FlagName);
 void SPI_PeripheralControl(SPI_RegDef_t *pSPIx,uint8_t EnorDi);

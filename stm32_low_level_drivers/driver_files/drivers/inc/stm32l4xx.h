@@ -1,6 +1,7 @@
 #ifndef STM32L4XX_H
 #define STM32L4XX_H
 #include <stdint.h>
+#define __IO  volatile
 
 #define     FLASH_BASEADDR                0x08000000U   //flash memory starting address
 #define     SRAM1_BASEADDR                0x20000000U   //sram1 starting address  96kb
@@ -247,6 +248,29 @@ typedef struct
 #define I2C2	((I2C_RegDef_t*)I2C2_BASEADDR)
 #define I2C3	((I2C_RegDef_t*)I2C3_BASEADDR)
 
+typedef struct
+{
+  __IO uint32_t CR1;      /*!< Control register 1,              Address offset: 0x00 */
+  __IO uint32_t CR2;      /*!< Control register 2,              Address offset: 0x04 */
+  __IO uint32_t CR3;      /*!< Control register 3,              Address offset: 0x08 */
+  __IO uint32_t BRR;      /*!< Baud rate register,              Address offset: 0x0C */
+  __IO uint32_t GTPR;     /*!< Guard time and prescaler,        Address offset: 0x10 */
+  __IO uint32_t RTOR;     /*!< Receiver timeout register,       Address offset: 0x14 */
+  __IO uint32_t RQR;      /*!< Request register,                Address offset: 0x18 */
+  __IO uint32_t ISR;      /*!< Interrupt & status register,     Address offset: 0x1C */
+  __IO uint32_t ICR;      /*!< Interrupt flag clear register,   Address offset: 0x20 */
+  __IO uint32_t RDR;      /*!< Receive data register,           Address offset: 0x24 */
+  __IO uint32_t TDR;      /*!< Transmit data register,          Address offset: 0x28 */
+} USART_TypeDef;
+
+
+#define USART1  			((USART_TypeDef*)USART1_BASEADDR)
+#define USART2  			((USART_TypeDef*)USART2_BASEADDR)
+#define USART3  			((USART_TypeDef*)USART3_BASEADDR)
+#define UART4  				((USART_TypeDef*)UART4_BASEADDR)
+#define UART5  				((USART_TypeDef*)UART5_BASEADDR)
+
+
 //macros for enabling GPIOx RCC clock
 
 #define GPIOA_PCLK_EN()    (RCC->AHB2ENR |= (1 << 0))
@@ -368,6 +392,12 @@ typedef struct
 #define I2C3_REG_RESET()     do{ (RCC->APB1RSTR1 |=  (1U << 23)); (RCC->APB1RSTR1 &= ~(1U << 23)); }while(0)
 
 
+#define USART1_REG_RESET()   do{ (RCC->APB2RSTR  |= (1U << 14)); (RCC->APB2RSTR  &= ~(1U << 14)); }while(0)
+#define USART2_REG_RESET()   do{ (RCC->APB1RSTR1 |= (1U << 17)); (RCC->APB1RSTR1 &= ~(1U << 17)); }while(0)
+#define USART3_REG_RESET()   do{ (RCC->APB1RSTR1 |= (1U << 18)); (RCC->APB1RSTR1 &= ~(1U << 18)); }while(0)
+#define UART4_REG_RESET()    do{ (RCC->APB1RSTR1 |= (1U << 19)); (RCC->APB1RSTR1 &= ~(1U << 19)); }while(0)
+#define UART5_REG_RESET()    do{ (RCC->APB1RSTR1 |= (1U << 20)); (RCC->APB1RSTR1 &= ~(1U << 20)); }while(0)
+
 #define GPIO_BASEADDR_TO_CODE(x)   ((x==GPIOA) ? 0:\
 								   (x==GPIOB) ? 1:\
 								   (x==GPIOC) ? 2:\
@@ -410,6 +440,11 @@ typedef struct
 #define SPI_SR_RXNE       0
 #define SPI_SR_TXE        1
 #define SPI_SR_BSY        7
+//***********************SPI IRQ numbers************'
+#define IRQ_NO_SPI1		35
+#define IRQ_NO_SPI2		36
+#define IRQ_NO_SPI3		51
+
 //***************************generic macros********************************
 //generic macros
 #define ENABLE          1
@@ -420,7 +455,9 @@ typedef struct
 #define GPIO_PIN_RESET  RESET
 #define FLAG_RESET      RESET
 #define FLAG_SET        SET
-
+#define SPI_READY       0
+#define SPI_BUSY_IN_RX  1
+#define SPI_BUSY_IN_TX  2
 
 /********************** I2C Register Flag Positions **********************/
 
@@ -431,7 +468,7 @@ typedef struct
 #define I2C_CR1_RXIE           2
 #define I2C_CR1_ADDRIE         3
 #define I2C_CR1_NACKIE  		4
-#define I2C_CR1_SOPIE   		5
+#define I2C_CR1_STOPIE   		5
 #define I2C_CR1_TCIE    		6
 #define I2C_CR1_ERRIE   		7
 #define I2C_CR1_DNF     		8
@@ -506,6 +543,75 @@ typedef struct
 
 //TXDR register
 #define I2C_TXDR_TXDATA     0
+
+//******************IRQ numbers for I2C********************
+#define IRQ_NO_I2C1_EV		31
+#define IRQ_NO_I2C1_ER		32
+#define IRQ_NO_I2C2_EV		33
+#define IRQ_NO_I2C2_ER		34
+#define IRQ_NO_I2C3_EV		72
+#define IRQ_NO_I2C3_ER		73
+
+//*********************************************************************
+//macros for usart registers
+#define USART_CR1_UE       (1U << 0)   // USART enable
+#define USART_CR1_RE       (1U << 2)   // Receiver enable
+#define USART_CR1_TE       (1U << 3)   // Transmitter enable
+#define USART_CR1_RXNEIE   (1U << 5)   // RXNE interrupt enable
+#define USART_CR1_TCIE     (1U << 6)   // Transmission complete interrupt enable
+#define USART_CR1_TXEIE    (1U << 7)   // TXE interrupt enable
+#define USART_CR1_M0       (1U << 12)  // Word length bit 0
+#define USART_CR1_OVER8    (1U << 15)  // Oversampling mode
+#define USART_CR1_M1       (1U << 28)  // Word length bit 1
+#define USART_CR1_PCE		(1u << 10)
+#define USART_CR1_PS		(1u << 9)
+
+
+#define USART_CR2_STOP_0   (0U << 12)   // 1 stop bit
+#define USART_CR2_STOP_0_5 (1U << 12)   // 0.5 stop bit
+#define USART_CR2_STOP_2   (2U << 12)   // 2 stop bits
+#define USART_CR2_STOP_1_5 (3U << 12)   // 1.5 stop bits
+
+#define USART_CR2_STOP_Pos    (12U)
+#define USART_CR2_STOP        (0x3U << USART_CR2_STOP_Pos)  // Mask for STOP[13:12]
+
+#define USART_CR3_EIE      (1U << 0)  // Error interrupt enable
+#define USART_CR3_DMAR     (1U << 6)  // DMA enable receiver
+#define USART_CR3_DMAT     (1U << 7)  // DMA enable transmitter
+#define USART_CR3_CTSE	   (1u << 9)
+#define USART_CR3_RTSE	   (1u << 8)
+
+#define USART_ISR_PE       (1U << 0)   // Parity error
+#define USART_ISR_FE       (1U << 1)   // Framing error
+#define USART_ISR_ORE      (1U << 3)   // Overrun error
+#define USART_ISR_IDLE     (1U << 4)   // Idle line detected
+#define USART_ISR_RXNE     (1U << 5)   // Read data register not empty
+#define USART_ISR_TC       (1U << 6)   // Transmission complete
+#define USART_ISR_TXE      (1U << 7)   // Transmit data register empty
+#define USART_ISR_BUSY     (1U << 16)  // Busy flag
+
+#define USART_ICR_PECF     (1U << 0)   // Clear parity error
+#define USART_ICR_FECF     (1U << 1)   // Clear framing error
+#define USART_ICR_ORECF    (1U << 3)   // Clear overrun error
+#define USART_ICR_IDLECF   (1U << 4)   // Clear idle line flag
+#define USART_ICR_TCCF     (1U << 6)   // Clear transmission complete
+
+//*******************rcc macros*******************
+#define RCC_CFGR_SWS_Pos      2U
+#define RCC_CFGR_SWS_Msk      (0x3U << RCC_CFGR_SWS_Pos)
+
+#define RCC_CFGR_HPRE_Pos     4U
+#define RCC_CFGR_HPRE_Msk     (0xFU << RCC_CFGR_HPRE_Pos)
+
+#define RCC_CFGR_PPRE1_Pos    8U
+#define RCC_CFGR_PPRE1_Msk    (0x7U << RCC_CFGR_PPRE1_Pos)
+
+#define RCC_CFGR_PPRE2_Pos    11U
+#define RCC_CFGR_PPRE2_Msk    (0x7U << RCC_CFGR_PPRE2_Pos)
+
+#define RCC_PLLCFGR_PLLREN    (1U << 24)  // PLL R output enable
+
+
 #endif
 
 

@@ -51,7 +51,9 @@ void I2C_Init(I2C_Handle_t *pI2CHandle)
 
 	//enable ACK will be used only for slave mode
 	if(pI2CHandle->I2C_Config.I2C_ACKControl == I2C_ACK_ENABLE)
-		pI2CHandle->pI2Cx->CR2 |= (1 << I2C_CR2_NACK);
+	    pI2CHandle->pI2Cx->CR2 &= ~(1 << I2C_CR2_NACK);  // clear NACK -> allow ACK
+	else
+	    pI2CHandle->pI2Cx->CR2 |=  (1 << I2C_CR2_NACK);  // set NACK -> disable ACK
 
 	//enable the peripheral
 	I2C_PeripheralControl(pI2CHandle->pI2Cx, ENABLE);
@@ -93,6 +95,8 @@ uint32_t I2C_MasterSendData(I2C_RegDef_t *pI2Cx, uint8_t *pTxBuffer, uint32_t le
     pI2Cx->CR2 |= (SlaveAddr << 1);          // Set slave address
     pI2Cx->CR2 |= (len << 16); // Number of bytes
     pI2Cx->CR2 &= ~(1<<I2C_CR2_RD_WRN);           // Write mode
+	pI2Cx->CR2 |= (1<<I2C_CR2_AUTOEND);
+
     I2C_GenerateStart(pI2Cx);         // Generate start
 
     // 3. Transmit data
@@ -148,23 +152,144 @@ void I2C_MasterReceiveData(I2C_RegDef_t *pI2Cx, uint8_t *pRxBuffer, uint32_t len
 /*
  * Interrupt mode Transmission and Reception
  */
+uint8_t I2C_MasterSendData_IT(I2C_Handle_t *pI2CHandle,uint8_t *pTxBuffer, uint32_t Len, uint8_t SlaveAddr)
+{
+	if(pI2CHandle->TxRxState != I2C_READY)
+		return I2C_BUSY;
+
+	pI2CHandle->pTxBuffer = pTxBuffer;
+	pI2CHandle->TxLen = Len;
+	pI2CHandle->TxRxState = I2C_BUSY_IN_TX;
+	pI2CHandle->DevAddr = SlaveAddr;
+
+	// 1. Configure CR2
+	pI2CHandle->pI2Cx->CR2 = 0;
+	pI2CHandle->pI2Cx->CR2 |= (SlaveAddr << 1);
+	pI2CHandle->pI2Cx->CR2 |= (Len << I2C_CR2_NBYTES);
+	pI2CHandle->pI2Cx->CR2 |= (1<<I2C_CR2_AUTOEND);
+
+	pI2CHandle->pI2Cx->CR2 |= 1 << I2C_CR2_START;
+
+	// 2. Enable TXIE and STOPIE
+	pI2CHandle->pI2Cx->CR1 |= (1<<I2C_CR1_TXIE) | (1<<I2C_CR1_STOPIE) | (1<<I2C_CR1_ERRIE);
+
+	return 0;
+}
+
+uint8_t I2C_MasterReceiveData_IT(I2C_Handle_t *pI2CHandle,uint8_t *pRxBuffer, uint32_t Len, uint8_t SlaveAddr)
+{
+	if(pI2CHandle->TxRxState != I2C_READY)
+		return I2C_BUSY;
+
+	pI2CHandle->pRxBuffer = pRxBuffer;
+	pI2CHandle->RxLen = Len;
+	pI2CHandle->TxRxState = I2C_BUSY_IN_RX;
+	pI2CHandle->DevAddr = SlaveAddr;
+
+	// 1. Configure CR2
+	pI2CHandle->pI2Cx->CR2 = 0;
+	pI2CHandle->pI2Cx->CR2 |= (SlaveAddr << 1);
+	pI2CHandle->pI2Cx->CR2 |= (Len << I2C_CR2_NBYTES);
+	pI2CHandle->pI2Cx->CR2 |= (1<<I2C_CR2_RD_WRN);
+	pI2CHandle->pI2Cx->CR2 |= (1<<I2C_CR2_AUTOEND);
+
+	pI2CHandle->pI2Cx->CR2 |= 1 << I2C_CR2_START;
+
+	// 2. Enable RXIE and STOPIE
+	pI2CHandle->pI2Cx->CR1 |= (1<<I2C_CR1_RXIE) | (1<<I2C_CR1_STOPIE) | (1<<I2C_CR1_ERRIE);
+
+	return 0;
+}
 
 /*
  * IRQ Configuration and ISR handling
  */
-void I2C_IRQInterruptConfig(uint8_t IRQNumber, uint8_t EnorDi)
+void I2C_IRQConfig(uint8_t IRQNumber, uint8_t EnorDi)
 {
-
+	if(EnorDi == ENABLE)
+	{
+		if(IRQNumber <= 31){
+			*NVIC_ISER0 |= (1<<IRQNumber);
+		}
+		else if(IRQNumber >=32 && IRQNumber < 64){
+			*NVIC_ISER1 |= (1<<(IRQNumber%32));
+		}
+		else if(IRQNumber >=64 && IRQNumber < 96){
+			*NVIC_ISER2 |= (1<<(IRQNumber%32));
+		}
+	}
+	else
+	{
+		if(IRQNumber <= 31){
+			*NVIC_ICER0 |= (1<<IRQNumber);
+		}
+		else if(IRQNumber >=32 && IRQNumber < 64){
+			*NVIC_ICER1 |= (1<<(IRQNumber%32));
+		}
+		else if(IRQNumber >=64 && IRQNumber < 96){
+			*NVIC_ICER2 |= (1<<(IRQNumber%32));
+		}
+	}
 }
-uint8_t I2C_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority)
+
+
+void I2C_IRQHandling(I2C_Handle_t *pI2CHandle)
 {
+	uint32_t temp1, temp2;
 
-}
+	// Handle TXIS
+	temp1 = (pI2CHandle->pI2Cx->CR1 & (1<<I2C_CR1_TXIE));
+	temp2 = (pI2CHandle->pI2Cx->ISR & (1<<I2C_ISR_TXIS));
+	if(temp1 && temp2)
+	{
+		// Transmit next byte
+		pI2CHandle->pI2Cx->TXDR = *(pI2CHandle->pTxBuffer++);
+		pI2CHandle->TxLen--;
 
+		if(pI2CHandle->TxLen == 0)
+		{
+			// Disable TX interrupt
+			pI2CHandle->pI2Cx->CR1 &= ~(1<<I2C_CR1_TXIE);
+		}
+	}
 
-void I2C_IRQHandling(I2C_RegDef_t *pI2CHandle)
-{
+	// Handle RXNE
+	temp1 = (pI2CHandle->pI2Cx->CR1 & (1 << I2C_CR1_RXIE));
+	temp2 = (pI2CHandle->pI2Cx->ISR & (1 << I2C_ISR_RXNE));
+	if(temp1 && temp2)
+	{
+		*(pI2CHandle->pRxBuffer++) = pI2CHandle->pI2Cx->RXDR;
+		pI2CHandle->RxLen--;
 
+		if(pI2CHandle->RxLen == 0)
+		{
+			// Disable RX interrupt
+			pI2CHandle->pI2Cx->CR1 &= ~(1<<I2C_CR1_RXIE);
+		}
+	}
+
+	  uint8_t event = (pI2CHandle->TxRxState == I2C_BUSY_IN_TX) ?
+			  I2C_EV_TX_CMPLT: I2C_EV_RX_CMPLT;
+
+	// Handle STOPF
+	temp1 = (pI2CHandle->pI2Cx->CR1 & (1<<I2C_CR1_STOPIE));
+	temp2 = (pI2CHandle->pI2Cx->ISR & (1<<I2C_ISR_STOPF));
+	if(temp1 && temp2)
+	{
+		// Clear STOP flag
+		pI2CHandle->pI2Cx->ICR |= (1<<I2C_ICR_STOPCF);
+
+		// Reset state
+		pI2CHandle->TxRxState = I2C_READY;
+		pI2CHandle->pTxBuffer = NULL;
+		pI2CHandle->pRxBuffer = NULL;
+
+		// I2C_ApplicationEventCallback(pI2CHandle, I2C_EVENT_TX_COMPLETE or RX_COMPLETE)
+		if(pI2CHandle->ApplicationCallback)
+		    {
+		        pI2CHandle->ApplicationCallback(pI2CHandle, event);
+		    }
+	}
 }
 
 /*
