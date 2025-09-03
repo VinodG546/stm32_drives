@@ -293,4 +293,116 @@ void USART_SetBaudRate(USART_TypeDef *pUSARTx, uint32_t BaudRate)
 
 	    pUSARTx->BRR = usartdiv;
 }
+/*
+ * interrupt send and receive data
+ */
+uint8_t USART_SendDataIT(USART_Handle_t *pUSARTHandle,uint8_t *pTxBuffer, uint32_t len)
+{
+	if(pUSARTHandle->TxBusyState != USART_BUSY_IN_TX)
+	{
+		pUSARTHandle->pTxBuffer = pTxBuffer;
+		pUSARTHandle->TxLen = len;
+		pUSARTHandle->TxBusyState = USART_BUSY_IN_TX;
+
+		//enable txe interrupt
+		pUSARTHandle->pUSARTx->CR1 |= USART_CR1_TXEIE;
+
+		return 1;
+	}
+	return 0;
+
+}
+uint8_t USART_ReceiveDataIT(USART_Handle_t *pUSARTHandle,uint8_t *pRxBuffer, uint32_t len)
+{
+	if(pUSARTHandle->RxBusyState != USART_BUSY_IN_RX)
+		{
+			pUSARTHandle->pRxBuffer = pRxBuffer;
+			pUSARTHandle->RxLen = len;
+			pUSARTHandle->RxBusyState = USART_BUSY_IN_RX;
+
+			//enable txe interrupt
+			pUSARTHandle->pUSARTx->CR1 |= USART_CR1_RXNEIE;
+
+			return 1;
+		}
+		return 0;
+}
+/*
+ * IRQ Configuration and ISR handling
+ */
+void USART_IRQConfig(uint8_t IRQNumber, uint8_t IRQPriority, uint8_t EnorDi)
+{
+	if(EnorDi == ENABLE)
+		{
+		if(IRQNumber <= 31){
+			*NVIC_ISER0 |= (1<<IRQNumber);
+		}
+		else if(IRQNumber >=32 && IRQNumber < 64){
+			*NVIC_ISER1 |= (1<<(IRQNumber%32));
+		}
+	}
+	else
+	{
+		if(IRQNumber <= 31){
+			*NVIC_ICER0 |= (1<<IRQNumber);
+		}
+		else if(IRQNumber >=32 && IRQNumber < 64){
+			*NVIC_ICER1 |= (1<<(IRQNumber%32));
+		}
+	}
+	uint8_t iprx = IRQNumber / 4;
+	uint8_t iprx_section = IRQNumber % 4;
+	uint8_t shift_amount  = (8*iprx_section) + (8-NO_PR_BITS_IMPLEMENTED);
+
+	*((volatile uint32_t*)(NVIC_PR_BASE_ADDR+(iprx*4))) |= (IRQPriority << shift_amount);
+
+}
+void USART_IRQHandling(USART_Handle_t *pUSARTHandle)
+{
+	uint32_t isr = pUSARTHandle->pUSARTx->ISR;
+	uint32_t cr1 = pUSARTHandle->pUSARTx->CR1;
+
+	// -------- TXE Interrupt Handling --------
+	if ((isr & USART_ISR_TXE) && (cr1 & USART_CR1_TXEIE))
+	{
+		if (pUSARTHandle->TxLen > 0)
+		{
+			pUSARTHandle->pUSARTx->TDR = *(pUSARTHandle->pTxBuffer);
+			pUSARTHandle->pTxBuffer++;
+			pUSARTHandle->TxLen--;
+		}
+		if (pUSARTHandle->TxLen == 0)
+		{
+			// Disable TXE, enable TC to finish last byte
+			pUSARTHandle->pUSARTx->CR1 &= ~USART_CR1_TXEIE;
+			pUSARTHandle->pUSARTx->CR1 |= USART_CR1_TCIE;
+		}
+	}
+	// -------- TC Interrupt Handling --------
+	if ((isr & USART_ISR_TC) && (cr1 & USART_CR1_TCIE))
+	{
+		// Clear TC
+		pUSARTHandle->pUSARTx->ICR |= USART_ICR_TCCF;
+
+		// Transmission complete
+		pUSARTHandle->TxBusyState = USART_READY;
+		pUSARTHandle->pUSARTx->CR1 &= ~USART_CR1_TCIE;
+		USART_ApplicationEventCallback(pUSARTHandle, USART_EVENT_TX_CMPLT);
+	}
+	// -------- RXNE Interrupt Handling --------
+	if ((isr & USART_ISR_RXNE) && (cr1 & USART_CR1_RXNEIE))
+	{
+		pUSARTHandle->pRxBuffer[0] = (uint8_t)(pUSARTHandle->pUSARTx->RDR & 0xFF);
+		pUSARTHandle->pRxBuffer++;
+		pUSARTHandle->RxLen--;
+
+		if (pUSARTHandle->RxLen == 0)
+		{
+			// Reception complete
+			pUSARTHandle->RxBusyState = USART_READY;
+			pUSARTHandle->pUSARTx->CR1 &= ~USART_CR1_RXNEIE;
+			USART_ApplicationEventCallback(pUSARTHandle, USART_EVENT_RX_CMPLT);
+		}
+	}
+}
 
