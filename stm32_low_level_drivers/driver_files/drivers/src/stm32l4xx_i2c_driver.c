@@ -41,8 +41,11 @@ void I2C_Init(I2C_Handle_t *pI2CHandle)
 	I2C_PeripheralControl(pI2CHandle->pI2Cx,DISABLE);
 
 	//configure timing register
-	pI2CHandle->pI2Cx->TIMINGR =(uint32_t) 0x10420A28;
-
+	if(pI2CHandle->I2C_Config.I2C_SCLSpeed == I2C_SCL_SPEED_SM) {
+		pI2CHandle->pI2Cx->TIMINGR = 0x10420A28; // Standard mode
+	} else {
+		pI2CHandle->pI2Cx->TIMINGR = 0x00B1112E; // Fast mode (example value)
+	}
 	//configure own address
 
 	pI2CHandle->pI2Cx->OAR1 &= ~(1<<I2c_OAR1_OA1EN);//disable EN bit first
@@ -165,13 +168,13 @@ uint8_t I2C_MasterSendData_IT(I2C_Handle_t *pI2CHandle,uint8_t *pTxBuffer, uint3
 	// 1. Configure CR2
 	pI2CHandle->pI2Cx->CR2 = 0;
 	pI2CHandle->pI2Cx->CR2 |= (SlaveAddr << 1);
-	pI2CHandle->pI2Cx->CR2 |= (Len << I2C_CR2_NBYTES);
-	pI2CHandle->pI2Cx->CR2 |= (1<<I2C_CR2_AUTOEND);
+	pI2CHandle->pI2Cx->CR2 |= (Len << 16);
+	//pI2CHandle->pI2Cx->CR2 |= (1<<I2C_CR2_AUTOEND);
 
 	pI2CHandle->pI2Cx->CR2 |= 1 << I2C_CR2_START;
 
 	// 2. Enable TXIE and STOPIE
-	pI2CHandle->pI2Cx->CR1 |= (1<<I2C_CR1_TXIE) | (1<<I2C_CR1_STOPIE) | (1<<I2C_CR1_ERRIE);
+	pI2CHandle->pI2Cx->CR1 |= (1<<I2C_CR1_TXIE) | (1<<I2C_CR1_STOPIE) | (1<<I2C_CR1_ERRIE) | (1<<I2C_CR1_TCIE);
 
 	return 0;
 }
@@ -189,7 +192,7 @@ uint8_t I2C_MasterReceiveData_IT(I2C_Handle_t *pI2CHandle,uint8_t *pRxBuffer, ui
 	// 1. Configure CR2
 	pI2CHandle->pI2Cx->CR2 = 0;
 	pI2CHandle->pI2Cx->CR2 |= (SlaveAddr << 1);
-	pI2CHandle->pI2Cx->CR2 |= (Len << I2C_CR2_NBYTES);
+	pI2CHandle->pI2Cx->CR2 |= (Len << 16);
 	pI2CHandle->pI2Cx->CR2 |= (1<<I2C_CR2_RD_WRN);
 	pI2CHandle->pI2Cx->CR2 |= (1<<I2C_CR2_AUTOEND);
 
@@ -232,66 +235,109 @@ void I2C_IRQConfig(uint8_t IRQNumber, uint8_t EnorDi)
 	}
 }
 
+void I2C_IRQ_priority_Config(uint8_t IRQNumber,uint8_t priority){
+	uint8_t iprx = IRQNumber / 4;
+	uint8_t iprx_section = IRQNumber % 4;
+	uint8_t shift_amount  = (8*iprx_section) + (8-NO_PR_BITS_IMPLEMENTED);
+
+	*((volatile uint32_t*)(NVIC_PR_BASE_ADDR+(iprx*4))) |= (priority << shift_amount);
+
+}
 
 void I2C_IRQHandling(I2C_Handle_t *pI2CHandle)
 {
-	uint32_t temp1, temp2;
+    uint32_t temp1, temp2;
+    uint8_t event = I2C_EVENT_ERROR; // Initialize with error
 
-	// Handle TXIS
-	temp1 = (pI2CHandle->pI2Cx->CR1 & (1<<I2C_CR1_TXIE));
-	temp2 = (pI2CHandle->pI2Cx->ISR & (1<<I2C_ISR_TXIS));
-	if(temp1 && temp2)
-	{
-		// Transmit next byte
-		pI2CHandle->pI2Cx->TXDR = *(pI2CHandle->pTxBuffer++);
-		pI2CHandle->TxLen--;
+    // Handle TXIS (Transmit Interrupt Status)
+    temp1 = (pI2CHandle->pI2Cx->CR1 & (1 << I2C_CR1_TXIE));
+    temp2 = (pI2CHandle->pI2Cx->ISR & (1 << I2C_ISR_TXIS));
+    if(temp1 && temp2)
+    {
+        // Check if there's more data to send
+        if(pI2CHandle->TxLen > 0)
+        {
+            pI2CHandle->pI2Cx->TXDR = *(pI2CHandle->pTxBuffer++);
+            pI2CHandle->TxLen--;
 
-		if(pI2CHandle->TxLen == 0)
-		{
-			// Disable TX interrupt
-			pI2CHandle->pI2Cx->CR1 &= ~(1<<I2C_CR1_TXIE);
-		}
-	}
+            // If this was the last byte, disable TXIE
+            if(pI2CHandle->TxLen == 0)
+            {
+                pI2CHandle->pI2Cx->CR1 &= ~(1 << I2C_CR1_TXIE);
+            }
+        }
+    }
 
-	// Handle RXNE
-	temp1 = (pI2CHandle->pI2Cx->CR1 & (1 << I2C_CR1_RXIE));
-	temp2 = (pI2CHandle->pI2Cx->ISR & (1 << I2C_ISR_RXNE));
-	if(temp1 && temp2)
-	{
-		*(pI2CHandle->pRxBuffer++) = pI2CHandle->pI2Cx->RXDR;
-		pI2CHandle->RxLen--;
+    // Handle RXNE (Receive Data Register Not Empty)
+    temp1 = (pI2CHandle->pI2Cx->CR1 & (1 << I2C_CR1_RXIE));
+    temp2 = (pI2CHandle->pI2Cx->ISR & (1 << I2C_ISR_RXNE));
+    if(temp1 && temp2)
+    {
+        // Check if we're expecting more data
+        if(pI2CHandle->RxLen > 0)
+        {
+            *(pI2CHandle->pRxBuffer++) = pI2CHandle->pI2Cx->RXDR;
+            pI2CHandle->RxLen--;
 
-		if(pI2CHandle->RxLen == 0)
-		{
-			// Disable RX interrupt
-			pI2CHandle->pI2Cx->CR1 &= ~(1<<I2C_CR1_RXIE);
-		}
-	}
+            // If this was the last byte, disable RXIE
+            if(pI2CHandle->RxLen == 0)
+            {
+                pI2CHandle->pI2Cx->CR1 &= ~(1 << I2C_CR1_RXIE);
+            }
+        }
+    }
 
-	  uint8_t event = (pI2CHandle->TxRxState == I2C_BUSY_IN_TX) ?
-			  I2C_EV_TX_CMPLT: I2C_EV_RX_CMPLT;
+    // Handle TC (Transfer Complete) - Important for the end of transmission
+    temp1 = (pI2CHandle->pI2Cx->CR1 & (1 << I2C_CR1_TCIE));
+    temp2 = (pI2CHandle->pI2Cx->ISR & (1 << I2C_ISR_TC));
+    if(temp1 && temp2)
+    {
+        // Transfer complete, but we might not have STOP condition yet
+        // You might want to handle this depending on your use case
+    }
 
-	// Handle STOPF
-	temp1 = (pI2CHandle->pI2Cx->CR1 & (1<<I2C_CR1_STOPIE));
-	temp2 = (pI2CHandle->pI2Cx->ISR & (1<<I2C_ISR_STOPF));
-	if(temp1 && temp2)
-	{
-		// Clear STOP flag
-		pI2CHandle->pI2Cx->ICR |= (1<<I2C_ICR_STOPCF);
+    // Handle STOPF (Stop Detection Flag)
+    temp1 = (pI2CHandle->pI2Cx->CR1 & (1 << I2C_CR1_STOPIE));
+    temp2 = (pI2CHandle->pI2Cx->ISR & (1 << I2C_ISR_STOPF));
+    if(temp1 && temp2)
+    {
+        // Clear STOP flag
+        pI2CHandle->pI2Cx->ICR |= (1 << I2C_ICR_STOPCF);
 
-		// Reset state
-		pI2CHandle->TxRxState = I2C_READY;
-		pI2CHandle->pTxBuffer = NULL;
-		pI2CHandle->pRxBuffer = NULL;
+        // Determine which event completed
+        if(pI2CHandle->TxRxState == I2C_BUSY_IN_TX)
+        {
+            event = I2C_EV_TX_CMPLT;
+        }
+        else if(pI2CHandle->TxRxState == I2C_BUSY_IN_RX)
+        {
+            event = I2C_EV_RX_CMPLT;
+        }
 
-		// I2C_ApplicationEventCallback(pI2CHandle, I2C_EVENT_TX_COMPLETE or RX_COMPLETE)
-		if(pI2CHandle->ApplicationCallback)
-		    {
-		        pI2CHandle->ApplicationCallback(pI2CHandle, event);
-		    }
-	}
+        // Reset state
+        pI2CHandle->TxRxState = I2C_READY;
+
+        // Notify application - do this BEFORE clearing buffers
+        if(pI2CHandle->ApplicationCallback)
+        {
+            pI2CHandle->ApplicationCallback(pI2CHandle, event);
+        }
+
+        // Clear buffers after callback (in case callback needs them)
+        pI2CHandle->pTxBuffer = NULL;
+        pI2CHandle->pRxBuffer = NULL;
+        pI2CHandle->TxLen = 0;
+        pI2CHandle->RxLen = 0;
+    }
+    if ((pI2CHandle->pI2Cx->CR1 & (1 << I2C_CR1_TCIE)) &&
+        (pI2CHandle->pI2Cx->ISR & (1 << I2C_ISR_TC))) {
+
+        if (pI2CHandle->TxRxState == I2C_BUSY_IN_TX && pI2CHandle->TxLen == 0) {
+            pI2CHandle->pI2Cx->CR2 |= (1 << I2C_CR2_STOP);  // generate STOP
+            // (STOPF interrupt you already handle will fire and call the app callback)
+        }
+    }
 }
-
 /*
  * Other Peripheral Control API's
  */

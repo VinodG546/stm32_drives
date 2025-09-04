@@ -73,22 +73,23 @@ struct I2C_Handle_t
 /*
  * I2C related status flags definitions
  */
-#define I2C_FLAG_TXE   		I2C_ISR_TXE
-#define I2C_FLAG_TXIS		I2C_ISR_TXIS
-#define I2C_FLAG_TC			I2C_ISR_TC
-#define I2C_FLAG_RXNE   	I2C_ISR_RXNE
-//#define I2C_FLAG_SB			( 1 << I2C_ISR_SB)
-#define I2C_FLAG_BUSY		I2C_ISR_BUSY
-#define I2C_FLAG_OVR  		I2C_ISR_OVR
-//#define I2C_FLAG_AF   		( 1 << I2C_ISR_AF)
-#define I2C_FLAG_ARLO 		I2C_ISR_ARLO
-#define I2C_FLAG_BERR 		I2C_ISR_BERR
-#define I2C_FLAG_STOPF 		I2C_ISR_STOPF
-//#define I2C_FLAG_ADD10 		( 1 << I2C_ISR_ADD10)
-#define I2C_FLAG_ADD10		I2C_ISR_ADDCODE
-//#define I2C_FLAG_BTF  		( 1 << I2C_ISR_BTF)
-#define I2C_FLAG_ADDR 		I2C_ISR_ADDR
-#define I2C_FLAG_TIMEOUT 	I2C_ISR_TIMEOUT
+#define I2C_FLAG_TXE        I2C_ISR_TXE
+#define I2C_FLAG_TXIS       I2C_ISR_TXIS
+#define I2C_FLAG_RXNE       I2C_ISR_RXNE
+#define I2C_FLAG_ADDR       I2C_ISR_ADDR
+#define I2C_FLAG_NACKF      I2C_ISR_NACKF  // Add this
+#define I2C_FLAG_STOPF      I2C_ISR_STOPF
+#define I2C_FLAG_TC         I2C_ISR_TC
+#define I2C_FLAG_TCR        I2C_ISR_TCR
+#define I2C_FLAG_BERR       I2C_ISR_BERR
+#define I2C_FLAG_ARLO       I2C_ISR_ARLO
+#define I2C_FLAG_OVR        I2C_ISR_OVR
+#define I2C_FLAG_PECERR     I2C_ISR_PECERR
+#define I2C_FLAG_TIMEOUT    I2C_ISR_TIMEOUT
+#define I2C_FLAG_ALERT      I2C_ISR_ALERT
+#define I2C_FLAG_BUSY       I2C_ISR_BUSY
+#define I2C_FLAG_DIR        I2C_ISR_DIR
+#define I2C_FLAG_ADDCODE    I2C_ISR_ADDCODE
 
 #define I2C_DISABLE_SR  	RESET
 #define I2C_ENABLE_SR   	SET
