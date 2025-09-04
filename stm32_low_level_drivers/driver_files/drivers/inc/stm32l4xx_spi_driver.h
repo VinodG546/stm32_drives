@@ -32,6 +32,7 @@ typedef struct {
 	uint32_t 		RxLen;
 	uint8_t 		TxState;
 	uint8_t         RxState;
+	uint8_t  		TxRxState;
 } SPI_Handle_t;
 
 #define SPI_DEVICE_MODE_MASTER   1
@@ -67,18 +68,12 @@ typedef struct {
 #define SPI_RXNE_FLAG            (1 << SPI_SR_RXNE)
 #define SPI_BUSY_FLAG            (1 << SPI_SR_BSY)
 
-#define I2C_EV_TX_CMPLT  	 	0
-#define I2C_EV_RX_CMPLT  	 	1
-#define I2C_EV_STOP       		2
-#define I2C_ERROR_BERR 	 		3
-#define I2C_ERROR_ARLO  		4
-#define I2C_ERROR_AF    		5
-#define I2C_ERROR_OVR   		6
-#define I2C_ERROR_TIMEOUT 		7
-#define I2C_EV_DATA_REQ         8
-#define I2C_EV_DATA_RCV         9
-
-// ✅ Correct DS bit position in CR2
+#define SPI_EVENT_TX_CMPLT     1
+#define SPI_EVENT_RX_CMPLT     2
+#define SPI_EVENT_TXRX_CMPLT   3   // New event for transmit+receive complete
+#define SPI_EVENT_OVR_ERR      4
+#define SPI_EVENT_CRC_ERR      5
+//  Correct DS bit position in CR2
 #define SPI_CR2_DS               8
 
 // Peripheral clock setup
@@ -98,9 +93,16 @@ void SPI_RecieveData(SPI_RegDef_t *pSPIx, uint8_t *pRxBuffer, uint32_t len);
 void SPI_IRQ_interrupt_Config(uint8_t IRQNumber, uint8_t EnorDi);
 void SPI_IRQ_priority_Config(uint8_t IRQNumber, uint8_t priority);
 void SPI_IRQHandling(SPI_Handle_t *pHandle);
+
 void  SPI_SSOEConfig(SPI_RegDef_t *pSPIx, uint8_t EnOrDi);
+
+
 uint8_t SPI_ReceiveData_IT(SPI_Handle_t *pSPIHandle, uint8_t *pRxBuffer, uint32_t len);
 uint8_t SPI_SendData_IT(SPI_Handle_t *pSPIHandle, uint8_t *pTxBuffer, uint32_t len);
+uint8_t SPI_TransmitReceive_IT(SPI_Handle_t *pSPIHandle, uint8_t *pTxBuffer, uint8_t *pRxBuffer, uint32_t len);
+
+
+
 void spi_rxe_IT_handle(SPI_Handle_t *pSPIHandle);
 void spi_txe_IT_handle(SPI_Handle_t *pSPIHandle);
 

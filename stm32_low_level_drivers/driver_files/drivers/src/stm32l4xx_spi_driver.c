@@ -30,7 +30,7 @@ void SPI_Init(SPI_Handle_t *pSPIHandle)
 {
 	SPI_PeriClockControl(pSPIHandle->pSPIx,ENABLE);
     uint32_t tempreg = 0;
-    SPI_PeripheralControl(SPI1 , DISABLE);
+    SPI_PeripheralControl(pSPIHandle->pSPIx, DISABLE);
 
     // Configure device mode
     tempreg |= pSPIHandle->SPIConfig.SPI_DeviceMode << SPI_CR1_MSTR;
@@ -64,7 +64,7 @@ void SPI_Init(SPI_Handle_t *pSPIHandle)
     	        pSPIHandle->pSPIx->CR1 |= (1 << SPI_CR1_SSI);
     }
 
-    SPI_PeripheralControl(SPI1 , ENABLE);
+    //SPI_PeripheralControl(pSPIHandle->pSPIx , ENABLE);
 }
 
 void SPI_DeInit(SPI_RegDef_t *pSPIx)
@@ -213,7 +213,55 @@ uint8_t SPI_ReceiveData_IT(SPI_Handle_t *pSPIHandle, uint8_t *pRxBuffer, uint32_
 	return 0;
 }
 
+uint8_t SPI_TransmitReceive_IT(SPI_Handle_t *pSPIHandle,
+                               uint8_t *pTxBuffer,
+                               uint8_t *pRxBuffer,
+                               uint32_t len)
+{
+    if (pSPIHandle->TxRxState != SPI_BUSY_IN_TXRX)
+    {
+        // Save buffers
+        pSPIHandle->pTxBuffer = pTxBuffer;
+        pSPIHandle->pRxBuffer = pRxBuffer;
+        pSPIHandle->TxLen = len;
+        pSPIHandle->RxLen = len;
 
+        // Mark busy
+        pSPIHandle->TxRxState = SPI_BUSY_IN_TXRX;
+
+        // Enable TXEIE and RXNEIE
+        pSPIHandle->pSPIx->CR2 |= (1 << SPI_CR2_TXEIE);
+        pSPIHandle->pSPIx->CR2 |= (1 << SPI_CR2_RXNEIE);
+
+        return 1;
+    }
+    return 0;
+}
+
+#if 0
+uint8_t SPI_TransmitReceive_IT(SPI_Handle_t *pSPIHandle, uint8_t *pTxBuffer, uint8_t *pRxBuffer, uint32_t len)
+{
+    if (pSPIHandle->TxState != SPI_BUSY_IN_TX && pSPIHandle->RxState != SPI_BUSY_IN_RX)
+    {
+        // Save buffers
+        pSPIHandle->pTxBuffer = pTxBuffer;
+        pSPIHandle->pRxBuffer = pRxBuffer;
+        pSPIHandle->TxLen = len;
+        pSPIHandle->RxLen = len;
+
+        // Mark busy
+
+        pSPIHandle->TxRxState = SPI_BUSY_IN_TXRX;
+
+        // Enable TXEIE and RXNEIE
+        pSPIHandle->pSPIx->CR2 |= (1 << SPI_CR2_TXEIE);
+        pSPIHandle->pSPIx->CR2 |= (1 << SPI_CR2_RXNEIE);
+
+        return 1;
+    }
+    return 0;
+}
+#endif
 //it send and receive
 void spi_txe_IT_handle(SPI_Handle_t *pSPIHandle)
 {
@@ -228,6 +276,13 @@ void spi_txe_IT_handle(SPI_Handle_t *pSPIHandle)
 		// Tx done
 		pSPIHandle->pSPIx->CR2 &= ~(1<<SPI_CR2_TXEIE);
 		pSPIHandle->TxState = SPI_READY;
+		SPI_ApplicationEventCallback(pSPIHandle, SPI_EVENT_TX_CMPLT);
+	}
+	if ((pSPIHandle->TxLen == 0) && (pSPIHandle->RxLen == 0))
+	{
+		pSPIHandle->TxState = SPI_READY;
+		pSPIHandle->RxState = SPI_READY;
+		SPI_ApplicationEventCallback(pSPIHandle, SPI_EVENT_TXRX_CMPLT);
 	}
 }
 
@@ -244,6 +299,7 @@ void spi_rxe_IT_handle(SPI_Handle_t *pSPIHandle)
 		// Rx done
 		pSPIHandle->pSPIx->CR2 &= ~SPI_CR2_RXNEIE;
 		pSPIHandle->TxState = SPI_READY;
+	    SPI_ApplicationEventCallback(pSPIHandle, SPI_EVENT_RX_CMPLT);
 	}
 }
 // IRQ config and handling (skeletons)
@@ -279,29 +335,75 @@ void SPI_IRQ_priority_Config(uint8_t IRQNumber, uint8_t priority)
 	*((NVIC_PR_BASE_ADDR+(iprx*4))) |= (priority << shift_amount);
 
 }
-
+#if 0
+uint8_t ch;
 void SPI_IRQHandling(SPI_Handle_t *pHandle)
 {
-    // TODO: handle SPI interrupts
-	uint8_t temp1, temp2;
+    uint8_t temp1, temp2;
 
-	// Check for TXE
-	temp1 = pHandle->pSPIx->SR & SPI_TXE_FLAG;
-	temp2 = pHandle->pSPIx->CR2 & (1<<SPI_CR2_TXEIE);
+    // -------- Full-Duplex TX/RX --------
+    // TXE flag set?
+    temp1 = (pHandle->pSPIx->SR & SPI_TXE_FLAG);
+    temp2 = (pHandle->pSPIx->CR2 & (1 << SPI_CR2_TXEIE));
 
-	if (temp1 && temp2)
-	{
-		// Handle TXE
-		spi_txe_IT_handle(pHandle);
-	}
+    if (temp1 && temp2 && pHandle->TxRxState == SPI_BUSY_IN_TXRX)
+    {
+        // Write next byte to DR
+        pHandle->pSPIx->DR = *(pHandle->pTxBuffer);
+        pHandle->pTxBuffer++;
+        pHandle->TxLen--;
 
-	// Check for RXNE
-	temp1 = pHandle->pSPIx->SR & SPI_RXNE_FLAG;
-	temp2 = pHandle->pSPIx->CR2 & (1<<SPI_CR2_RXNEIE);
+        if (pHandle->TxLen == 0)
+        {
+            // All bytes written → disable TXE interrupt
+            pHandle->pSPIx->CR2 &= ~(1 << SPI_CR2_TXEIE);
+        }
+    }
 
-	if (temp1 && temp2)
-	{
-		// Handle RXNE
-		spi_rxe_IT_handle(pHandle);
-	}
+    // RXNE flag set?
+    temp1 = (pHandle->pSPIx->SR & SPI_RXNE_FLAG);
+    temp2 = (pHandle->pSPIx->CR2 & (1 << SPI_CR2_RXNEIE));
+
+    if (temp1 && temp2 && pHandle->TxRxState == SPI_BUSY_IN_TXRX)
+    {
+        // Read next byte from DR
+        *(pHandle->pRxBuffer) = pHandle->pSPIx->DR;
+        pHandle->pRxBuffer++;
+        pHandle->RxLen--;
+
+        if (pHandle->RxLen == 0)
+        {
+            // All bytes received → disable RXNE interrupt
+            pHandle->pSPIx->CR2 &= ~(1 << SPI_CR2_RXNEIE);
+            pHandle->TxRxState = SPI_READY;
+
+            // Application callback
+            SPI_ApplicationEventCallback(pHandle, SPI_EVENT_TXRX_CMPLT);
+        }
+    }
+}
+#endif
+void SPI_IRQHandling(SPI_Handle_t *pHandle)
+{
+    uint32_t temp1, temp2;
+
+    // Handle TXE interrupt
+    temp1 = pHandle->pSPIx->SR & SPI_TXE_FLAG;
+    temp2 = pHandle->pSPIx->CR2 & (1 << SPI_CR2_TXEIE);
+
+    if (temp1 && temp2)
+    {
+        spi_txe_IT_handle(pHandle);
+    }
+
+    // Handle RXNE interrupt
+    temp1 = pHandle->pSPIx->SR & SPI_RXNE_FLAG;
+    temp2 = pHandle->pSPIx->CR2 & (1 << SPI_CR2_RXNEIE);
+
+    if (temp1 && temp2)
+    {
+        spi_rxe_IT_handle(pHandle);
+    }
+
+
 }
