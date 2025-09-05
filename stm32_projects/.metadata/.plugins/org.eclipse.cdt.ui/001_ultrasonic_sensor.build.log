@@ -1,0 +1,10 @@
+15:42:20 **** Incremental Build of configuration Debug for project 001_ultrasonic_sensor ****
+make -j12 all 
+arm-none-eabi-size  001_ultrasonic_sensor.elf 
+   text	   data	    bss	    dec	    hex	filename
+  22028	    104	   2136	  24268	   5ecc	001_ultrasonic_sensor.elf
+Finished building: default.size.stdout
+ 
+
+15:42:20 Build Finished. 0 errors, 0 warnings. (took 263ms)
+
