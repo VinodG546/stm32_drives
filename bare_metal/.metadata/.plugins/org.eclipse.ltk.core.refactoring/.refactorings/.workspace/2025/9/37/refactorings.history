@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;01_l3d_toggle&apos; to &apos;01_led_toggle&apos;" description="Rename resource &apos;01_l3d_toggle&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="/01_l3d_toggle" name="01_led_toggle" stamp="1757322773275" updateReferences="true"/>
+</session>
