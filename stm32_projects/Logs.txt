@@ -1,0 +1,16 @@
+********Ultrasonic Senosr Data**************
+Object in range distance : 8 cm
+Object left at Distance : 8 cm
+Object in range distance : 7 cm
+Object left at Distance : 7 cm
+Object in range distance : 8 cm
+Object left at Distance : 8 cm
+Object in range distance : 7 cm
+Object left at Distance : 7 cm
+Object in range distance : 8 cm
+Object left at Distance : 8 cm
+Object in range distance : 8 cm
+Object left at Distance : 8 cm
+Object in range distance : 10 cm
+Object left at Distance : 10 cm
+Object in range distance : 84 cm
