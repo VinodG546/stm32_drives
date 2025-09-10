@@ -1,0 +1,7 @@
+"./Src/i2c.o"
+"./Src/main.o"
+"./Src/spi.o"
+"./Src/syscalls.o"
+"./Src/sysmem.o"
+"./Src/uart.o"
+"./Startup/startup_stm32l476rgtx.o"
