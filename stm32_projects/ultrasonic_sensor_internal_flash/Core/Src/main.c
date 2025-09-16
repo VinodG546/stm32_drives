@@ -71,8 +71,8 @@ uint32_t Difference = 0;
 uint8_t Is_First_Captured = 0;  // is the first value captured ?
 uint16_t Distance  = 0 , object_present;
 uint8_t str[]="hello world";
-uint8_t first[]="object entered into range:";
-uint8_t second[]="object removed from range\r\n";
+uint8_t first[]="object entered into range";
+uint8_t second[]="object removed at ";
 
 #define TRIG_PIN GPIO_PIN_15
 #define TRIG_PORT GPIOB
@@ -165,7 +165,7 @@ void EraseFlash(void )
 
 	FlashEraseDefination.TypeErase = FLASH_TYPEERASE_PAGES;
 	FlashEraseDefination.Banks     = FLASH_BANK_2;
-	FlashEraseDefination.Page      = 0;
+	FlashEraseDefination.Page      = 256;
 	FlashEraseDefination.NbPages   = 5;
 
 	HAL_FLASHEx_Erase(&FlashEraseDefination, &FlashEraseFault);
@@ -177,25 +177,33 @@ uint32_t flash_write_addr = FLASH_USER_START_ADDR;  // start address
 void Flash_WriteString(const char *str)
 {
     HAL_FLASH_Unlock();
-
-    uint64_t data64;
+    uint64_t localaddr= flash_write_addr;
+	uint64_t data64;
     uint32_t i = 0;
+    int b = 0;
     while (str[i] != '\0') {
         data64 = 0xFFFFFFFFFFFFFFFF;  // default erased value
-        for (int b = 0; b < 8 && str[i] != '\0'; b++, i++) {
+
+        for (b = 0; b < 8 && str[i] != '\0'; b++, i++) {
             ((uint8_t*)&data64)[b] = str[i];
         }
+        if(str[i] == '\0' && b<=7)
+        {
+        	 ((uint8_t*)&data64)[b] = '\0';
 
+        }
         HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, flash_write_addr, data64);
         flash_write_addr += 8;   // move forward 8 bytes
     }
 
     // add null terminator
-    data64 = 0xFFFFFFFFFFFFFFFF;
-    ((uint8_t*)&data64)[0] = '\0';
-    HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, flash_write_addr, data64);
-    flash_write_addr += 8;
-
+    if(b>8)
+    {
+		data64 = 0xFFFFFFFFFFFFFFFF;
+		((uint8_t*)&data64)[0] = '\0';
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, flash_write_addr, data64);
+	}
+    flash_write_addr = localaddr + 256;
     HAL_FLASH_Lock();
 }
 
@@ -264,21 +272,22 @@ int main(void)
   while (1)
   {
       Distance = HCSR04_Read();
-
+      uint16_t d;
       if (Distance > 0 && Distance < 150)  // object detected within 150 cm
       {
           if (object_present == 0)  // just entered range
           {
-              HAL_UART_Transmit(&huart2, first, strlen((char*)first), 100);
+              //HAL_UART_Transmit(&huart2, first, strlen((char*)first), 100);
 
-              char msg[30];
-              sprintf(msg, "Distance=%u cm\r\n", Distance);
+              char msg[50];
+              sprintf(msg, "%s Distance=%u cm\r\n",(char*)first, Distance);
               HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 100);
               //Flash_WriteString((char*)first);
               Flash_WriteString(msg);
 
               object_present = 1;  // mark as present
           }
+          d=Distance;
           // else: do nothing, object still in range
       }
       else  // no object or out of range
@@ -286,8 +295,10 @@ int main(void)
           if (object_present == 1)  // just removed
           {
         	  cnt++;
-              HAL_UART_Transmit(&huart2, second, strlen((char*)second), 100);
-              Flash_WriteString("object removed");
+        	  char msg[50];
+			   sprintf(msg, "%s Distance=%u cm\r\n",(char*)second, d);
+			   HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 100);
+              Flash_WriteString(msg);
               object_present = 0;  // mark as removed
           }
           // else: do nothing, still no object
@@ -509,7 +520,7 @@ void DumpAllFlash(void)
         HAL_UART_Transmit(&huart2, (uint8_t*)buffer, strlen(buffer), 100);
         HAL_UART_Transmit(&huart2, (uint8_t*)"\r\n", 2, 100);
 
-        addr += ((strlen(buffer) + 1 + 7) & ~7); // +1 for '\0', align to 8 bytes
+        addr += 256; // +1 for '\0', align to 8 bytes
     }
 
     HAL_UART_Transmit(&huart2, (uint8_t*)"--- END LOG ---\r\n", 18, 100);
