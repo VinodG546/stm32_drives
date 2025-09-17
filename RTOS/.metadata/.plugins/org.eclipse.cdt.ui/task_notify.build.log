@@ -1,0 +1,10 @@
+16:17:26 **** Incremental Build of configuration Debug for project task_notify ****
+make -j12 all 
+arm-none-eabi-size  task_notify.elf 
+   text	   data	    bss	    dec	    hex	filename
+  21860	     96	   5992	  27948	   6d2c	task_notify.elf
+Finished building: default.size.stdout
+ 
+
+16:17:26 Build Finished. 0 errors, 0 warnings. (took 265ms)
+

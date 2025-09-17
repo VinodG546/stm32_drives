@@ -1,0 +1,10 @@
+../Drivers/CMSIS/Include/core_cm4.h:2059:26:ITM_SendChar	4
+../Core/Src/main.c:64:6:debug_printf	2
+../Core/Src/main.c:81:6:led_Task_Handler	2
+../Core/Src/main.c:97:6:btn_Task_Handler	2
+../Core/Src/main.c:119:5:main	1
+../Core/Src/main.c:199:6:SystemClock_Config	4
+../Core/Src/main.c:249:13:MX_USART2_UART_Init	2
+../Core/Src/main.c:284:13:MX_GPIO_Init	1
+../Core/Src/main.c:329:6:StartDefaultTask	1
+../Core/Src/main.c:344:6:Error_Handler	1
