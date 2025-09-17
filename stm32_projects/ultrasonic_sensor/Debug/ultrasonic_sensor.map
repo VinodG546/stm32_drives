@@ -3745,9 +3745,8 @@ LOAD C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
  .data.first    0x2000000c       0x1b ./Core/Src/main.o
                 0x2000000c                first
  *fill*         0x20000027        0x1 
- .data.second   0x20000028       0x1a ./Core/Src/main.o
+ .data.second   0x20000028       0x1c ./Core/Src/main.o
                 0x20000028                second
- *fill*         0x20000042        0x2 
  .data.SystemCoreClock
                 0x20000044        0x4 ./Core/Src/system_stm32l4xx.o
                 0x20000044                SystemCoreClock

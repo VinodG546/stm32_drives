@@ -1,0 +1,27 @@
+16:10:08 **** Incremental Build of configuration Debug for project 08_Queue_Management ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L476xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'vTask2_cmd_handling':
+../Core/Src/main.c:346:31: error: 'uart_read_queue' undeclared (first use in this function); did you mean 'uart_write_queue'?
+  346 |                 xQueueReceive(uart_read_queue, &pData, portMAX_DELAY);
+      |                               ^~~~~~~~~~~~~~~
+      |                               uart_write_queue
+../Core/Src/main.c:346:31: note: each undeclared identifier is reported only once for each function it appears in
+In file included from ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h:57,
+                 from ../Core/Src/main.c:21:
+../Middlewares/Third_Party/FreeRTOS/Source/include/task.h:2067:62: warning: passing argument 1 of 'xTaskGenericNotify' from incompatible pointer type [-Wincompatible-pointer-types]
+ 2067 | #define xTaskNotifyGive( xTaskToNotify ) xTaskGenericNotify( ( xTaskToNotify ), ( 0 ), eIncrement, NULL )
+      |                                                              ^~~~~~~~~~~~~~~~~
+      |                                                              |
+      |                                                              void (*)(void *)
+../Core/Src/main.c:351:17: note: in expansion of macro 'xTaskNotifyGive'
+  351 |                 xTaskNotifyGive(vTask1_menu_display);
+      |                 ^~~~~~~~~~~~~~~
+../Middlewares/Third_Party/FreeRTOS/Source/include/task.h:1853:45: note: expected 'TaskHandle_t' {aka 'struct tskTaskControlBlock *'} but argument is of type 'void (*)(void *)'
+ 1853 | BaseType_t xTaskGenericNotify( TaskHandle_t xTaskToNotify, uint32_t ulValue, eNotifyAction eAction, uint32_t *pulPreviousNotificationValue ) PRIVILEGED_FUNCTION;
+      |                                ~~~~~~~~~~~~~^~~~~~~~~~~~~
+make: *** [Core/Src/subdir.mk:37: Core/Src/main.o] Error 1
+"make -j12 all" terminated with exit code 2. Build might be incomplete.
+
+16:10:09 Build Failed. 2 errors, 1 warnings. (took 416ms)
+

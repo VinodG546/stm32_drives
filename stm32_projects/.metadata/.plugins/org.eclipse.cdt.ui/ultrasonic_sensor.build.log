@@ -1,4 +1,4 @@
-18:03:38 **** Incremental Build of configuration Debug for project ultrasonic_sensor ****
+17:54:26 **** Build of configuration Debug for project ultrasonic_sensor ****
 make -j12 all 
 arm-none-eabi-size  ultrasonic_sensor.elf 
    text	   data	    bss	    dec	    hex	filename
@@ -6,5 +6,5 @@ arm-none-eabi-size  ultrasonic_sensor.elf
 Finished building: default.size.stdout
  
 
-18:03:38 Build Finished. 0 errors, 0 warnings. (took 278ms)
+17:54:26 Build Finished. 0 errors, 0 warnings. (took 354ms)
 

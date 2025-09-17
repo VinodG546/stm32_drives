@@ -1,0 +1,164 @@
+/*
+ * lcd.c
+ *
+ *  Created on: Sep 8, 2025
+ *      Author: VINOD
+ */
+
+
+#include "lcd.h"
+#include "stm32l4xx_hal.h"
+
+/* ----------- Local function prototypes ----------- */
+static void write_4_bits(uint8_t value);
+static void lcd_enable(void);
+static void mdelay(uint32_t ms);
+static void udelay(uint32_t us);
+
+/* ----------- Public functions ----------- */
+
+/* Send character to LCD */
+void lcd_print_char(uint8_t data)
+{
+    /* RS = 1 for data */
+    HAL_GPIO_WritePin(LCD_GPIO_PORT, LCD_GPIO_RS, GPIO_PIN_SET);
+
+    /* R/W = 0 for write */
+    HAL_GPIO_WritePin(LCD_GPIO_PORT, LCD_GPIO_RW, GPIO_PIN_RESET);
+
+    write_4_bits(data >> 4);   /* high nibble */
+    write_4_bits(data & 0x0F); /* low nibble */
+}
+
+/* Send command to LCD */
+void lcd_send_command(uint8_t cmd)
+{
+    /* RS = 0 for command */
+    HAL_GPIO_WritePin(LCD_GPIO_PORT, LCD_GPIO_RS, GPIO_PIN_RESET);
+
+    /* R/W = 0 for write */
+    HAL_GPIO_WritePin(LCD_GPIO_PORT, LCD_GPIO_RW, GPIO_PIN_RESET);
+
+    write_4_bits(cmd >> 4);
+    write_4_bits(cmd & 0x0F);
+}
+
+/* Print string */
+void lcd_print_string(char *message)
+{
+    while(*message != '\0')
+    {
+        lcd_print_char((uint8_t)(*message++));
+    }
+}
+
+/* Initialize LCD */
+void lcd_init(void)
+{
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+    /* Enable GPIO clock */
+    __HAL_RCC_GPIOB_CLK_ENABLE();   // <-- change if LCD is not on GPIOB
+
+    /* Configure RS, RW, EN, D4-D7 as output */
+    GPIO_InitStruct.Mode  = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull  = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+
+    GPIO_InitStruct.Pin = LCD_GPIO_RS | LCD_GPIO_RW | LCD_GPIO_EN |
+                          LCD_GPIO_D4 | LCD_GPIO_D5 | LCD_GPIO_D6 | LCD_GPIO_D7;
+    HAL_GPIO_Init(LCD_GPIO_PORT, &GPIO_InitStruct);
+
+    /* Reset all pins */
+    HAL_GPIO_WritePin(LCD_GPIO_PORT, LCD_GPIO_RS | LCD_GPIO_RW |
+                      LCD_GPIO_EN | LCD_GPIO_D4 | LCD_GPIO_D5 |
+                      LCD_GPIO_D6 | LCD_GPIO_D7, GPIO_PIN_RESET);
+
+    /* LCD init sequence */
+    mdelay(40);
+
+    write_4_bits(0x3);
+    mdelay(5);
+
+    write_4_bits(0x3);
+    udelay(150);
+
+    write_4_bits(0x3);
+    write_4_bits(0x2);  // set to 4-bit mode
+
+    /* Function set: 4-bit, 2 line, 5x8 font */
+    lcd_send_command(LCD_CMD_4DL_2N_5X8F);
+
+    /* Display ON, Cursor ON */
+    lcd_send_command(LCD_CMD_DON_CURON);
+
+    /* Clear display */
+    lcd_display_clear();
+
+    /* Entry mode */
+    lcd_send_command(LCD_CMD_INCADD);
+}
+
+/* Clear LCD */
+void lcd_display_clear(void)
+{
+    lcd_send_command(LCD_CMD_DIS_CLEAR);
+    mdelay(2); // clear takes > 1.52ms
+}
+
+/* Return home */
+void lcd_display_return_home(void)
+{
+    lcd_send_command(LCD_CMD_DIS_RETURN_HOME);
+    mdelay(2);
+}
+
+/* Set cursor position */
+void lcd_set_cursor(uint8_t row, uint8_t column)
+{
+    column--; // column starts at 0 internally
+
+    switch (row)
+    {
+        case 1:
+            lcd_send_command(0x80 | column);
+            break;
+        case 2:
+            lcd_send_command(0xC0 | column);
+            break;
+        default:
+            break;
+    }
+}
+
+/* ----------- Private helpers ----------- */
+
+static void write_4_bits(uint8_t value)
+{
+    HAL_GPIO_WritePin(LCD_GPIO_PORT, LCD_GPIO_D4, (value >> 0) & 0x1);
+    HAL_GPIO_WritePin(LCD_GPIO_PORT, LCD_GPIO_D5, (value >> 1) & 0x1);
+    HAL_GPIO_WritePin(LCD_GPIO_PORT, LCD_GPIO_D6, (value >> 2) & 0x1);
+    HAL_GPIO_WritePin(LCD_GPIO_PORT, LCD_GPIO_D7, (value >> 3) & 0x1);
+
+    lcd_enable();
+}
+
+static void lcd_enable(void)
+{
+    HAL_GPIO_WritePin(LCD_GPIO_PORT, LCD_GPIO_EN, GPIO_PIN_SET);
+    udelay(10);
+    HAL_GPIO_WritePin(LCD_GPIO_PORT, LCD_GPIO_EN, GPIO_PIN_RESET);
+    udelay(100);
+}
+
+static void mdelay(uint32_t ms)
+{
+    HAL_Delay(ms); // use HAL's delay (SysTick)
+}
+
+static void udelay(uint32_t us)
+{
+    /* crude delay loop */
+    uint32_t count = (SystemCoreClock/1000000) * us / 5;
+    while(count--) __NOP();
+}

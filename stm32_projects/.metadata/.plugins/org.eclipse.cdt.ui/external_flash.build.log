@@ -1,0 +1,10 @@
+19:14:36 **** Incremental Build of configuration Debug for project external_flash ****
+make -j12 all 
+arm-none-eabi-size  external_flash.elf 
+   text	   data	    bss	    dec	    hex	filename
+  20816	    120	   2248	  23184	   5a90	external_flash.elf
+Finished building: default.size.stdout
+ 
+
+19:14:37 Build Finished. 0 errors, 0 warnings. (took 286ms)
+

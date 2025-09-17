@@ -1,0 +1,17 @@
+18:18:11 **** Incremental Build of configuration Debug for project 05_USART2_TX ****
+make -j12 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -DSTM32L476xx -c -I../Inc -I"C:/Users/VINOD/STM32CubeIDE/Drivers/CMSIS/Include" -I"C:/Users/VINOD/STM32CubeIDE/Drivers/CMSIS/Device/ST/STM32L4xx/Include" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/main.o"
+arm-none-eabi-gcc -o "05_USART2_TX.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\VINOD\STM32CubeIDE\bare_metal\05_USART2_TX\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="05_USART2_TX.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: 05_USART2_TX.elf
+ 
+arm-none-eabi-size  05_USART2_TX.elf 
+arm-none-eabi-objdump -h -S 05_USART2_TX.elf  > "05_USART2_TX.list"
+   text	   data	    bss	    dec	    hex	filename
+    964	      0	   1568	   2532	    9e4	05_USART2_TX.elf
+Finished building: default.size.stdout
+ 
+Finished building: 05_USART2_TX.list
+ 
+
+18:18:12 Build Finished. 0 errors, 0 warnings. (took 523ms)
+

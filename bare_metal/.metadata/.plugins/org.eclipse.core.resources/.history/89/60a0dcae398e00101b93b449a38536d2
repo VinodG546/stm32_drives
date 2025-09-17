@@ -1,0 +1,17 @@
+/*
+ * spi.h
+ *
+ *  Created on: Sep 10, 2025
+ *      Author: VINOD
+ */
+
+#ifndef SPI_H_
+#define SPI_H_
+#include"stm32l4xx.h"
+#include<stdint.h>
+
+uint8_t spi1_transmit(uint8_t data);
+void spi1_init(void);
+
+
+#endif /* SPI_H_ */

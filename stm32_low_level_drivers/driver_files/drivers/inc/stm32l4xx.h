@@ -458,6 +458,9 @@ typedef struct
 #define SPI_READY       0
 #define SPI_BUSY_IN_RX  1
 #define SPI_BUSY_IN_TX  2
+#define SPI_BUSY_IN_TXRX  3
+
+
 
 /********************** I2C Register Flag Positions **********************/
 
@@ -595,6 +598,13 @@ typedef struct
 #define USART_ICR_ORECF    (1U << 3)   // Clear overrun error
 #define USART_ICR_IDLECF   (1U << 4)   // Clear idle line flag
 #define USART_ICR_TCCF     (1U << 6)   // Clear transmission complete
+
+//nvic
+#define IRQ_NO_USART1       37
+#define IRQ_NO_USART2		38
+#define IRQ_NO_USART3		39
+#define IRQ_NO_UART4		52
+#define IRQ_NO_UART5		53
 
 //*******************rcc macros*******************
 #define RCC_CFGR_SWS_Pos      2U

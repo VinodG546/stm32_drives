@@ -1,0 +1,17 @@
+15:20:42 **** Incremental Build of configuration Debug for project 14_i2c_driver ****
+make -j12 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -DSTM32L476xx -c -I../Inc -I"C:/Users/VINOD/STM32CubeIDE/Drivers/CMSIS/Include" -I"C:/Users/VINOD/STM32CubeIDE/Drivers/CMSIS/Device/ST/STM32L4xx/Include" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/main.o"
+arm-none-eabi-gcc -o "14_i2c_driver.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\VINOD\STM32CubeIDE\bare_metal\14_i2c_driver\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="14_i2c_driver.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: 14_i2c_driver.elf
+ 
+arm-none-eabi-size  14_i2c_driver.elf 
+arm-none-eabi-objdump -h -S 14_i2c_driver.elf  > "14_i2c_driver.list"
+   text	   data	    bss	    dec	    hex	filename
+   6044	    100	   1932	   8076	   1f8c	14_i2c_driver.elf
+Finished building: default.size.stdout
+ 
+Finished building: 14_i2c_driver.list
+ 
+
+15:20:43 Build Finished. 0 errors, 0 warnings. (took 867ms)
+

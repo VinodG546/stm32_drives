@@ -1,0 +1,152 @@
+/*
+ * w25qxx.c
+ *
+ *  Created on: Sep 16, 2025
+ *      Author: VINOD
+ */
+
+#include"w25qxx.h"
+#include"main.h"
+
+extern SPI_HandleTypeDef hspi2;
+#define W25Q_SPI hspi2
+
+#define csLOW()    HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_RESET)
+#define csHIGH()   HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_SET)
+
+
+#define numBLOCK 256
+
+void SPI_Write(uint8_t *data,uint8_t len)
+{
+	HAL_SPI_Transmit(&W25Q_SPI, data ,len, 2000);
+}
+void SPI_Read(uint8_t *data,uint8_t len)
+{
+	HAL_SPI_Receive(&W25Q_SPI, data, len, 5000);
+}
+void W25Q_RESET(void)
+{
+	uint8_t tData[2];
+	tData[0]=0x66;
+	tData[1]=0x99;
+	csLOW();
+	HAL_SPI_Transmit(&W25Q_SPI, tData, 2, 1000);
+	csHIGH();
+	HAL_Delay(100);
+}
+
+uint32_t W25_ReadID(void)
+{
+	uint8_t tData = 0x9f;
+	uint8_t rData[3];
+	csLOW();
+	HAL_SPI_Transmit(&W25Q_SPI, &tData, 1, 1000);
+	HAL_SPI_Receive(&W25Q_SPI, rData, 3, 1000);
+	csHIGH();
+	return ((rData[0]<<16)|(rData[1]<<8)|rData[2]);
+}
+
+void W25q_Read(uint32_t startpage , uint8_t offset,uint32_t size,uint8_t *rData)
+{
+	uint8_t tData[4];
+	uint32_t memAddr = (startpage*256)+offset;
+	tData[0]=0x03; //enable read
+	tData[1]=(memAddr >> 16)&0xff;
+	tData[2]=(memAddr >> 8) & 0xff;
+	tData[3]=(memAddr)&0xff;
+	csLOW();
+	SPI_Write(tData,4);
+	SPI_Read(rData, size);
+	csHIGH();
+}
+void write_enable(void)
+{
+	uint8_t tData = 0x6;
+	csLOW();
+	SPI_Write(&tData, 1);
+	csHIGH();
+	HAL_Delay(5);
+}
+
+void write_disable(void)
+{
+	uint8_t tData = 0x4;
+	csLOW();
+	SPI_Write(&tData, 1);
+	csHIGH();
+	HAL_Delay(5);
+}
+
+void Flash_Erase_Sector(uint16_t sector)
+{
+	uint8_t Erase_addr[4];
+	uint32_t memAddr = sector*16*256;
+
+	write_enable();
+
+	Erase_addr[0]=0x20;
+	Erase_addr[1]=(memAddr >> 16)&0xff;
+	Erase_addr[2]=(memAddr >> 8) & 0xff;
+	Erase_addr[3]=(memAddr)&0xff;
+
+	csLOW();
+	SPI_Write(Erase_addr, 4);
+	csHIGH();
+	HAL_Delay(450);
+	write_disable();
+
+}
+uint32_t bytes_to_write(uint32_t size, uint16_t offset)
+{
+	if((size+offset)<256) return size;
+	else return (256-offset);
+}
+
+void flash_write(uint32_t page,uint16_t offset,uint32_t size,uint8_t *tdata)
+{
+	uint8_t data[266];
+	uint32_t startpage=page;
+	uint32_t endpage=startpage+((size+offset-1)/256);
+	uint32_t numpages=endpage-startpage+1;
+
+	uint16_t startsector = startpage/16;
+	uint16_t endsector = endpage/16;
+	uint16_t numsectors=endsector-startsector;
+	for(uint32_t i=0;i<numpages ; i++)
+	{
+		Flash_Erase_Sector(startsector++);
+	}
+
+	for(uint32_t i=0;i<numpages;i++)
+	{
+		uint32_t memAddr  = (startpage*256)+offset;
+		uint16_t bytesremaining=bytes_to_write(size,offset);
+
+		uint32_t indx = 0;
+
+		write_enable();
+
+		data[0] = 0x02;
+		data[1] = (memAddr >> 16) & 0xFF;
+		data[2] = (memAddr >> 8) & 0xFF;
+		data[3] = memAddr & 0xFF;
+
+		indx = 4;
+
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

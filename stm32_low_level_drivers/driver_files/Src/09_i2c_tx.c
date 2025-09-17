@@ -64,6 +64,7 @@ void I2C1_Inits(void)
 }
 
 uint8_t buffer[] = "Hello";
+uint8_t rx_buffer[20];
 uint32_t scl;
 uint32_t sda;
 int main(void)
@@ -82,7 +83,9 @@ int main(void)
     	//delay(100);
 
     	I2C_MasterSendData(i2c1.pI2Cx, buffer, strlen((char*)buffer), SLAVE_ADDR);
-    	delay(1000);
+    	delay(100);
+    	I2C_MasterReceiveData(i2c1.pI2Cx,buffer,sizeof(rx_buffer),SLAVE_ADDR);
+    	delay(100);
 
     }
 

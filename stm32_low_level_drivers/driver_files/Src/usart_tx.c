@@ -4,6 +4,12 @@
  *  Created on: Sep 3, 2025
  *      Author: VINOD
  */
+/*
+ * usart_tx.c
+ *
+ *  Created on: Sep 3, 2025
+ *      Author: VINOD
+ */
 
 #include "stm32l4xx_uart_driver.h"
 #include "stm32l4xx_gpio_driver.h"
@@ -105,6 +111,5 @@ int main(void)
 		delay(1000); // Optional for debug visibility
 	}
 }
-
 
 

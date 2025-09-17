@@ -1,0 +1,18 @@
+10:18:56 **** Incremental Build of configuration Debug for project 12_uart_interrupt ****
+make -j12 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -DSTM32L476xx -c -I../Inc -I"C:/Users/VINOD/STM32CubeIDE/Drivers/CMSIS/Include" -I"C:/Users/VINOD/STM32CubeIDE/Drivers/CMSIS/Device/ST/STM32L4xx/Include" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/main.o"
+arm-none-eabi-gcc "../Src/uart.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -DSTM32L476xx -c -I../Inc -I"C:/Users/VINOD/STM32CubeIDE/Drivers/CMSIS/Include" -I"C:/Users/VINOD/STM32CubeIDE/Drivers/CMSIS/Device/ST/STM32L4xx/Include" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/uart.d" -MT"Src/uart.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/uart.o"
+arm-none-eabi-gcc -o "12_uart_interrupt.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\VINOD\STM32CubeIDE\bare_metal\12_uart_interrupt\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="12_uart_interrupt.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: 12_uart_interrupt.elf
+ 
+arm-none-eabi-size  12_uart_interrupt.elf 
+arm-none-eabi-objdump -h -S 12_uart_interrupt.elf  > "12_uart_interrupt.list"
+   text	   data	    bss	    dec	    hex	filename
+   1220	      8	   1568	   2796	    aec	12_uart_interrupt.elf
+Finished building: default.size.stdout
+ 
+Finished building: 12_uart_interrupt.list
+ 
+
+10:18:57 Build Finished. 0 errors, 0 warnings. (took 804ms)
+

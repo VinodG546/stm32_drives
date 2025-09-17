@@ -8,7 +8,8 @@
 #include"stm32l4xx_i2c_driver.h"
 #include"stm32l4xx_gpio_driver.h"
 #include"stm32l4xx.h"
-#include<string.h>
+#include<string.h>  // for NULL
+
 /*
  * PB8	-->		I2C1_SCL
  * PB9  -->		I2C1_SDA

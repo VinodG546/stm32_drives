@@ -71,9 +71,6 @@
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.symbolsrec.2010389069" name="MCU Output Converter Motorola S-rec with symbols" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.symbolsrec"/>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.957234000.1979725430" name="i2c_rx.c" rcbsApplicability="disable" resourcePath="Src/i2c_rx.c" toolsToInvoke="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.1969910751.2143258031">
-						<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.1969910751.2143258031" name="MCU/MPU GCC Compiler" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.1969910751"/>
-					</fileInfo>
 					<folderInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.957234000.5725425" name="/" resourcePath="drivers">
 						<toolChain id="com.st.stm32cube.ide.mcu.gnu.managedbuild.toolchain.exe.debug.33472890" name="MCU ARM GCC" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.toolchain.exe.debug" unusedChildren="">
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_mcu.2133307093.976931227" name="MCU" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_mcu.2133307093"/>
@@ -107,15 +104,19 @@
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.symbolsrec.340574700" name="MCU Output Converter Motorola S-rec with symbols" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.symbolsrec.2010389069"/>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.957234000.2071699540" name="stm32l476xx.h" rcbsApplicability="disable" resourcePath="drivers/inc/stm32l476xx.h" toolsToInvoke=""/>
 					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.957234000.302853230" name="stm32l4xx.h" rcbsApplicability="disable" resourcePath="drivers/inc/stm32l4xx.h" toolsToInvoke=""/>
 					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.957234000.143778144" name="stm32l4xx_spi_driver.h" rcbsApplicability="disable" resourcePath="drivers/inc/stm32l4xx_spi_driver.h" toolsToInvoke=""/>
 					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.957234000.1691799225" name="stm32l4xx_gpio_driver.h" rcbsApplicability="disable" resourcePath="drivers/inc/stm32l4xx_gpio_driver.h" toolsToInvoke=""/>
 					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.957234000.1859902635" name="spi.h" rcbsApplicability="disable" resourcePath="drivers/inc/spi.h" toolsToInvoke=""/>
+					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.957234000.1536331395" name="lcd.h" rcbsApplicability="disable" resourcePath="bsp/lcd.h" toolsToInvoke=""/>
+					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.957234000.1334280943" name="rtc.h" rcbsApplicability="disable" resourcePath="bsp/rtc.h" toolsToInvoke=""/>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Inc"/>
-						<entry excluding="i2c_tx.c|07_spi_tx_esp32.c|07_spi_tx.c|06_spi_tx_testing.c|05_gpio_interrupt.c|02_ultrasonic_sensor.c|04_toggle_led_using_push_button.c|03_blink_led2_opendrain.c|01_blink_led.c|main.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Src"/>
+						<entry excluding="11_i2c_int.c|09_i2c_tx.c|10_spi_interrupt.c|arduino_spi_interrupt.c|i2c_rx.c|usart_interrupt.c|usart_tx.c|10_spi_it.c|08_spi_master_stm.c|07_spi_slave_stm.c|07_spi_tx.c|i2c_master_send.c|06_spi_tx_testing.c|05_gpio_interrupt.c|02_ultrasonic_sensor.c|04_toggle_led_using_push_button.c|03_blink_led2_opendrain.c|01_blink_led.c|main.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Startup"/>
-						<entry excluding="src/spi.c|inc/spi.h" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="drivers"/>
+						<entry excluding="lcd.h|lcd.c|rtc.h|rtc.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="bsp"/>
+						<entry excluding="src/stm32l4xx_spi_slave_driver.c|inc/stm32l476xx.h|src/spi.c|inc/spi.h" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="drivers"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

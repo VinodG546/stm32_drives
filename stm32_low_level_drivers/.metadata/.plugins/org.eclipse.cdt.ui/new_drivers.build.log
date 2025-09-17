@@ -1,0 +1,17 @@
+18:02:23 **** Build of configuration Debug for project new_drivers ****
+make -j12 all 
+arm-none-eabi-gcc "../drivers/src/gpio_driver.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -c -I"C:/Users/VINOD/STM32CubeIDE/stm32_low_level_drivers/new_drivers/drivers/inc" -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"drivers/src/gpio_driver.d" -MT"drivers/src/gpio_driver.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "drivers/src/gpio_driver.o"
+arm-none-eabi-gcc "../drivers/src/spi_driver.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -c -I"C:/Users/VINOD/STM32CubeIDE/stm32_low_level_drivers/new_drivers/drivers/inc" -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"drivers/src/spi_driver.d" -MT"drivers/src/spi_driver.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "drivers/src/spi_driver.o"
+arm-none-eabi-gcc "../Src/spi_tx.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -c -I"C:/Users/VINOD/STM32CubeIDE/stm32_low_level_drivers/new_drivers/drivers/inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/spi_tx.d" -MT"Src/spi_tx.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/spi_tx.o"
+In file included from C:/Users/VINOD/STM32CubeIDE/stm32_low_level_drivers/new_drivers/drivers/inc/spi_driver.h:5,
+                 from ../Src/spi_tx.c:2:
+C:/Users/VINOD/STM32CubeIDE/stm32_low_level_drivers/new_drivers/drivers/inc/gpio_driver.h:7:10: fatal error: stm32l476xx.h: No such file or directory
+    7 | #include "stm32l476xx.h"
+      |          ^~~~~~~~~~~~~~~
+compilation terminated.
+make: *** [Src/subdir.mk:25: Src/spi_tx.o] Error 1
+make: *** Waiting for unfinished jobs....
+"make -j12 all" terminated with exit code 2. Build might be incomplete.
+
+18:02:24 Build Failed. 3 errors, 0 warnings. (took 670ms)
+

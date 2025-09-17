@@ -75,7 +75,7 @@ void DumpAllFlash(void)
         HAL_UART_Transmit(&huart2, (uint8_t*)buffer, strlen(buffer), 100);
         HAL_UART_Transmit(&huart2, (uint8_t*)"\r\n", 2, 100);
 
-        addr += (strlen(buffer) + 8) & ~7; // move to next 8-byte aligned slot
+        addr += 256; // move to next 8-byte aligned slot
     }
 
     HAL_UART_Transmit(&huart2, (uint8_t*)"--- END LOG ---\r\n", 18, 100);

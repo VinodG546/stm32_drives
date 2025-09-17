@@ -227,7 +227,7 @@ void USART_PeripheralControl(USART_TypeDef *pUSARTx, uint8_t EnOrDi)
 	else
 		pUSARTx->CR1 &= ~1<<USART_CR1_UE;
 }
-#include "stm32l476xx.h"
+
 #include <stdint.h>
 
 // Helper function to extract PCLK from RCC

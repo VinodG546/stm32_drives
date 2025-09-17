@@ -1,0 +1,40 @@
+/*
+ * w25qxx.c
+ *
+ *  Created on: Sep 16, 2025
+ *      Author: VINOD
+ */
+
+#include"w25qxx.h"
+#include"main.h"
+
+extern SPI_HandleTypeDef hspi2;
+#define W25Q_SPI hspi2
+
+#define csLOW()    HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_RESET)
+#define csHIGH()   HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_SET)
+
+
+#define numBLOCK 128
+
+void W25Q_RESET(void)
+{
+	uint8_t tData[2];
+	tData[0]=0x66;
+	tData[1]=0x99;
+	csLOW();
+	HAL_SPI_Transmit(&W25Q_SPI, tData, 2, 1000);
+	csHIGH();
+	HAL_Delay(100);
+}
+
+uint32_t W25_ReadID(void)
+{
+	uint32_t tData = 0x9f;
+	uint32_t rData[3];
+	csLOW();
+	HAL_SPI_Transmit(&W25Q_SPI, &tData, 1, 1000);
+	HAL_SPI_Receive(&W25Q_SPI, rData, 3, 1000);
+	csHIGH();
+	return ((rData[0]<<16)|(rData[1]<<8)|rData[2]);
+}

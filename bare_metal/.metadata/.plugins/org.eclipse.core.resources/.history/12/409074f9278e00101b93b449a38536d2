@@ -1,0 +1,16 @@
+#include "stm32l4xx.h"
+#include <stdio.h>
+#include<stdint.h>
+#include"uart.h"
+#include"i2c.h"
+uint8_t msg[]="i2c transfer";
+int main(void)
+{
+	i2c1_init();
+	i2c1_master_send(0x3C, buffer, 2);
+    while(1)
+    {
+
+
+    }
+}

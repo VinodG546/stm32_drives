@@ -1,7 +1,11 @@
 LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/arch=x86_64
 LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/name=Local
 LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/os=win32
-configDescList=org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:01_l3d_toggle,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:01_led_toggle2_struct Debug
+configDescList=org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:01_l3d_toggle,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:01_led_toggle2_struct Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:08_adc_conversion Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:09_systick_delay Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:10_timers Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:11_input_interrupt Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:12_uart_interrupt Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:02_gpio_output Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:03_gpio_bsrr,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:04_gpio_input,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:05_USART2_TX Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:06_USART2_printf Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:07_USART2_tx_rx Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:14_i2c_driver Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:15_spi_driver,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:13_uart_dma Debug
 eclipse.preferences.version=1
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:01_l3d_toggle/activeLaunchMode=run
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:01_l3d_toggle/activeLaunchTarget=null\:---
+org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:02_gpio_output\ Debug/activeLaunchMode=run
+org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:05_USART2_TX\ Debug/activeLaunchMode=debug
+org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:07_USART2_tx_rx\ Debug/activeLaunchMode=debug
+org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:13_uart_dma\ Debug/activeLaunchMode=debug

@@ -1,0 +1,10 @@
+18:18:33 **** Incremental Build of configuration Debug for project 10_SD_Card ****
+make -j12 all 
+arm-none-eabi-size  10_SD_Card.elf 
+   text	   data	    bss	    dec	    hex	filename
+  39948	    128	   2720	  42796	   a72c	10_SD_Card.elf
+Finished building: default.size.stdout
+ 
+
+18:18:33 Build Finished. 0 errors, 0 warnings. (took 282ms)
+

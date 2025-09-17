@@ -1,0 +1,18 @@
+#include "stm32l4xx.h"
+#include <stdio.h>
+#include<stdint.h>
+#include<string.h>
+#include"uart.h"
+#include"i2c.h"
+uint8_t tx='a';
+uint8_t rx;
+int main(void)
+{
+	spi1_init();
+	rx=spi1_transmit(tx);
+    while(1)
+    {
+
+
+    }
+}

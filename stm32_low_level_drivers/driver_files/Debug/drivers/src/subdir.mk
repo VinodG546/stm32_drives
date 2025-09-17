@@ -5,19 +5,25 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../drivers/src/lcd.c \
 ../drivers/src/stm32l4xx_gpio_driver.c \
 ../drivers/src/stm32l4xx_i2c_driver.c \
-../drivers/src/stm32l4xx_spi_driver.c 
+../drivers/src/stm32l4xx_spi_driver.c \
+../drivers/src/stm32l4xx_uart_driver.c 
 
 OBJS += \
+./drivers/src/lcd.o \
 ./drivers/src/stm32l4xx_gpio_driver.o \
 ./drivers/src/stm32l4xx_i2c_driver.o \
-./drivers/src/stm32l4xx_spi_driver.o 
+./drivers/src/stm32l4xx_spi_driver.o \
+./drivers/src/stm32l4xx_uart_driver.o 
 
 C_DEPS += \
+./drivers/src/lcd.d \
 ./drivers/src/stm32l4xx_gpio_driver.d \
 ./drivers/src/stm32l4xx_i2c_driver.d \
-./drivers/src/stm32l4xx_spi_driver.d 
+./drivers/src/stm32l4xx_spi_driver.d \
+./drivers/src/stm32l4xx_uart_driver.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -27,7 +33,7 @@ drivers/src/%.o drivers/src/%.su drivers/src/%.cyclo: ../drivers/src/%.c drivers
 clean: clean-drivers-2f-src
 
 clean-drivers-2f-src:
-	-$(RM) ./drivers/src/stm32l4xx_gpio_driver.cyclo ./drivers/src/stm32l4xx_gpio_driver.d ./drivers/src/stm32l4xx_gpio_driver.o ./drivers/src/stm32l4xx_gpio_driver.su ./drivers/src/stm32l4xx_i2c_driver.cyclo ./drivers/src/stm32l4xx_i2c_driver.d ./drivers/src/stm32l4xx_i2c_driver.o ./drivers/src/stm32l4xx_i2c_driver.su ./drivers/src/stm32l4xx_spi_driver.cyclo ./drivers/src/stm32l4xx_spi_driver.d ./drivers/src/stm32l4xx_spi_driver.o ./drivers/src/stm32l4xx_spi_driver.su
+	-$(RM) ./drivers/src/lcd.cyclo ./drivers/src/lcd.d ./drivers/src/lcd.o ./drivers/src/lcd.su ./drivers/src/stm32l4xx_gpio_driver.cyclo ./drivers/src/stm32l4xx_gpio_driver.d ./drivers/src/stm32l4xx_gpio_driver.o ./drivers/src/stm32l4xx_gpio_driver.su ./drivers/src/stm32l4xx_i2c_driver.cyclo ./drivers/src/stm32l4xx_i2c_driver.d ./drivers/src/stm32l4xx_i2c_driver.o ./drivers/src/stm32l4xx_i2c_driver.su ./drivers/src/stm32l4xx_spi_driver.cyclo ./drivers/src/stm32l4xx_spi_driver.d ./drivers/src/stm32l4xx_spi_driver.o ./drivers/src/stm32l4xx_spi_driver.su ./drivers/src/stm32l4xx_uart_driver.cyclo ./drivers/src/stm32l4xx_uart_driver.d ./drivers/src/stm32l4xx_uart_driver.o ./drivers/src/stm32l4xx_uart_driver.su
 
 .PHONY: clean-drivers-2f-src
 
