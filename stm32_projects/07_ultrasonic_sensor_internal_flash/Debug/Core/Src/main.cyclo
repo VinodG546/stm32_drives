@@ -1,0 +1,14 @@
+../Drivers/CMSIS/Include/core_cm4.h:2059:26:ITM_SendChar	4
+../Core/Src/main.c:83:6:HAL_TIM_IC_CaptureCallback	6
+../Core/Src/main.c:120:10:HCSR04_Read	5
+../Core/Src/main.c:148:6:debug_printf	2
+../Core/Src/main.c:162:6:EraseFlash	1
+../Core/Src/main.c:179:6:Flash_WriteString	8
+../Core/Src/main.c:228:6:Flash_ReadString	6
+../Core/Src/main.c:251:5:main	6
+../Core/Src/main.c:345:6:SystemClock_Config	4
+../Core/Src/main.c:395:13:MX_TIM1_Init	4
+../Core/Src/main.c:445:13:MX_USART2_UART_Init	2
+../Core/Src/main.c:480:13:MX_GPIO_Init	1
+../Core/Src/main.c:531:6:DumpAllFlash	5
+../Core/Src/main.c:581:6:Error_Handler	1
