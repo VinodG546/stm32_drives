@@ -1,0 +1,14 @@
+../Core/Src/w25qxx.c:20:6:SPI_Write	1
+../Core/Src/w25qxx.c:24:6:SPI_Read	1
+../Core/Src/w25qxx.c:28:6:W25Q_RESET	1
+../Core/Src/w25qxx.c:39:10:W25_ReadID	1
+../Core/Src/w25qxx.c:50:6:W25q_Read	1
+../Core/Src/w25qxx.c:63:6:write_enable	1
+../Core/Src/w25qxx.c:72:6:write_disable	1
+../Core/Src/w25qxx.c:81:6:Flash_Erase_Sector	1
+../Core/Src/w25qxx.c:100:10:bytes_to_write	2
+../Core/Src/w25qxx.c:105:10:bytes_to_modify	2
+../Core/Src/w25qxx.c:110:6:flash_write	5
+../Core/Src/w25qxx.c:172:9:Flash_ReadStatus	1
+../Core/Src/w25qxx.c:193:6:Flash_Write_Update	8
+../Core/Src/w25qxx.c:247:6:Flash_AppendLog	2
